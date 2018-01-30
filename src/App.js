@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import PlayerAudio from './PlayerAudio'
-import logo from './logo.svg';
+import logo from './logo.svg'
 
 import './App.css';
 

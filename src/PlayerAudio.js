@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import detect from 'bpm-detective';
+import {Icon} from 'react-fa'
 
 const urlAudio = (typeof window !== 'undefined') ? window.location.hash.replace('#', '') : ''
 
@@ -111,23 +112,18 @@ class PlayerAudio extends Component {
   }
 
   render() {
-    if(!this.state.shouldRender) return <div>Loading....</div>
+    if(!this.state.shouldRender) return <div><Icon spin name="spinner fa-4x" /></div>
     return (
       <React.Fragment>
         <div id="waveform"></div>
         <div>BPM: {this.state.bpm}</div>
-        <div>Zoom
-          <button onClick={() => this.moreZoom()}>IN</button>
-          <button onClick={() => this.lessZoom()}>OUT</button>
-        </div>
-
-        <div>Loop ({this.state.loopActive ? 'Activated' : 'Unabled'})
-          <button onClick={() => this.setLoop()}>Loop</button>
-        </div>
-
-        <div>Actions:
-          <button onClick={() => this.wavesurfer.play()}>Play</button>
-          <button onClick={() => this.wavesurfer.pause()}>Stop</button>
+        <div>
+          <button onClick={() => this.moreZoom()}><Icon name="search-plus" /></button>
+          <button onClick={() => this.lessZoom()}><Icon name="search-minus" /></button>
+          <button onClick={() => this.setLoop()} style={{background: this.state.loopActive ? '#0f0' : null}}><Icon name="retweet" /></button>
+          <button onClick={() => this.wavesurfer.play()}><Icon name="play" /></button>
+          <button onClick={() => this.wavesurfer.pause()}><Icon name="pause" /></button>
+          <button onClick={() => this.wavesurfer.stop()}><Icon name="stop" /></button>
         </div>
 
         <input type="file" id="mediaFile" onChange={this.setNewSong} />
