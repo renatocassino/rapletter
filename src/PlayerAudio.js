@@ -8,7 +8,7 @@ class PlayerAudio extends Component {
     shouldRender: false,
     bpm: null,
     zoom: 1,
-    loopActive: false
+    loopActive: false,
   }
 
   constructor(props) {
@@ -16,12 +16,42 @@ class PlayerAudio extends Component {
     this.wavesurfer = {}
   }
 
+  setNewSong = (ev) => {
+
+    /** Getting BPM */
+    var fileReader  = new FileReader();
+    const self = this
+
+    fileReader.onload = function() {
+      var arrayBuffer = this.result;
+      console.log(arrayBuffer);
+      console.log(arrayBuffer.byteLength);
+
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      let context = new AudioContext();
+
+      new Promise((resolve, reject) => {
+        context.decodeAudioData(arrayBuffer, resolve, reject)
+      }).then(buffer => {
+        try {
+          const bpm = detect(buffer);
+          self.setState({ bpm })
+        } catch (err) {
+          console.error(err);
+        }
+      })
+    }
+
+    fileReader.readAsArrayBuffer(ev.target.files[0]);
+    var url = URL.createObjectURL(ev.target.files[0]);
+    this.wavesurfer.load(url)
+  }
+
   componentDidMount() {
     if(typeof window === 'undefined') return
-    if(typeof window.WaveSurfer !== 'undefined') {
-      this.setState({shouldRender: true})
-
+    if(typeof window.WaveSurfer !== 'undefined' || true) {
       setTimeout(() => {
+        this.setState({shouldRender: true})
         let wavesurfer = window.WaveSurfer.create({
           container: '#waveform',
           waveColor: 'violet',
@@ -29,31 +59,6 @@ class PlayerAudio extends Component {
         })
 
         this.wavesurfer = wavesurfer
-
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        let context = new AudioContext();
-
-        fetch(urlAudio)
-          // Get response as ArrayBuffer
-          .then(response => response.arrayBuffer())
-          .then(buffer => {
-            // Decode audio into an AudioBuffer
-            return new Promise((resolve, reject) => {
-              context.decodeAudioData(buffer, resolve, reject);
-            });
-          })
-          // Run detection
-          .then(buffer => {
-            try {
-              const bpm = detect(buffer);
-              this.setState({bpm})
-            } catch (err) {
-              console.error(err);
-            }
-          }
-        );
-
-        wavesurfer.load(urlAudio)
 
         wavesurfer.on('ready', function () {
           wavesurfer.play();
@@ -77,7 +82,7 @@ class PlayerAudio extends Component {
 
   moreZoom = () => {
     this.setState({
-      zoom: this.state.zoom += 10
+      zoom: this.state.zoom + 10
     })
 
     this.wavesurfer.zoom(this.state.zoom)
@@ -85,7 +90,7 @@ class PlayerAudio extends Component {
 
   lessZoom = () => {
     this.setState({
-      zoom: this.state.zoom -= 10
+      zoom: this.state.zoom - 10
     })
 
     this.wavesurfer.zoom(this.state.zoom)
@@ -119,6 +124,13 @@ class PlayerAudio extends Component {
         <div>Loop ({this.state.loopActive ? 'Activated' : 'Unabled'})
           <button onClick={() => this.setLoop()}>Loop</button>
         </div>
+
+        <div>Actions:
+          <button onClick={() => this.wavesurfer.play()}>Play</button>
+          <button onClick={() => this.wavesurfer.pause()}>Stop</button>
+        </div>
+
+        <input type="file" id="mediaFile" onChange={this.setNewSong} />
       </React.Fragment>
     );
   }
