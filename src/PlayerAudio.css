@@ -1,0 +1,28 @@
+.player {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.player__wave {
+  background: rgba(100, 100, 100, 0.1);
+  border-radius: 10px 10px 0 0;
+}
+
+.player__media-control {
+  display: flex;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 0 0 10px 10px;
+}
+
+.player__media-control > button {
+  flex-grow: 1;
+  border: 0;
+  cursor: pointer;
+  color: #ccc;
+  background: none;
+  padding: 0.5rem;
+}
+
+.player__media-control > button:hover {
+  color: #fff;
+}
