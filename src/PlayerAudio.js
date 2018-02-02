@@ -4,8 +4,6 @@ import {Icon} from 'react-fa'
 
 import './PlayerAudio.css'
 
-const urlAudio = (typeof window !== 'undefined') ? window.location.hash.replace('#', '') : ''
-
 class PlayerAudio extends Component {
   state = {
     shouldRender: false,
