@@ -3,6 +3,8 @@ import detect from 'bpm-detective'
 import { Icon } from 'react-fa'
 import { fancyTimeFormat } from './utils/time'
 
+import PlayPause from './button/PlayPause'
+
 import './PlayerAudio.css'
 
 const WaveSurfer = require('wavesurfer.js')
@@ -139,10 +141,9 @@ class PlayerAudio extends Component {
         </div>
 
         <div className="player__media-control">
-          {this.state.isPlaying ?
-            <button onClick={() => this.wavesurfer.pause()}><Icon name="pause" /></button> :
-            <button onClick={() => this.wavesurfer.play()}><Icon name="play" /></button>
-          }
+        <PlayPause isPlaying={this.state.isPlaying} onClick={() => {
+            (this.state.isPlaying) ? this.wavesurfer.pause() : this.wavesurfer.play()
+          }} />
           <button onClick={() => this.wavesurfer.stop()}><Icon name="stop" /></button>
           <button onClick={() => this.setLoop()} style={{background: this.state.loopActive ? 'rgba(0, 255, 0, 0.6)' : null}}>
             <Icon name="retweet" />

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PlayerAudio from './PlayerAudio'
 import logo from './logo.png'
 
-import './App.css';
+import './App.css'
 
 class App extends Component {
   render() {
@@ -15,8 +15,8 @@ class App extends Component {
         <br />
         <PlayerAudio />
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App

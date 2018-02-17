@@ -6,7 +6,7 @@ export const fancyTimeFormat = (time) => {
   var secs = time % 60
 
   // Output like "1:01" or "4:03:59" or "123:03:59"
-  var result = "";
+  var result = ''
 
   if (hours > 0) {
     if (hours < 10) {
@@ -19,7 +19,7 @@ export const fancyTimeFormat = (time) => {
     mins = `0${mins}`
   }
 
-  result += `${mins}:${(secs < 10 ? "0" : "")}`
+  result += `${mins}:${(secs < 10 ? '0' : '')}`
   result += `${secs}`
   return result
 }
