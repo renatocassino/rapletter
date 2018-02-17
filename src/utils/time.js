@@ -1,5 +1,5 @@
-export const fancyTimeFormat = (time) => {
-  time = parseInt(time)
+export const fancyTimeFormat = (timeInSeconds) => {
+  const time = parseInt(timeInSeconds, 10)
 
   var hours = Math.floor(time / 3600)
   var mins = Math.floor((time % 3600) / 60)

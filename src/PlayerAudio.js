@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import detect from 'bpm-detective'
 import { Icon } from 'react-fa'
 import { fancyTimeFormat } from './utils/time'
-
-import PlayPause from './button/PlayPause'
+import MediaInfo from './MediaInfo'
+import MediaControl from './MediaControl'
 
 import './PlayerAudio.css'
 
@@ -15,6 +15,7 @@ class PlayerAudio extends Component {
     bpm: null,
     loopActive: false,
     isPlaying: false,
+    loops: [],
   }
 
   constructor(props) {
@@ -83,7 +84,8 @@ class PlayerAudio extends Component {
       this.wavesurfer.on('ready', () => {
         this.wavesurfer.play();
 
-        this.setState({ duration: fancyTimeFormat(parseInt(this.wavesurfer.getDuration())) })
+        const duration = this.wavesurfer.getDuration()
+        this.setState({ duration: fancyTimeFormat(duration) })
       });
 
       setInterval(this.runEvents, 100)
@@ -99,20 +101,13 @@ class PlayerAudio extends Component {
 
   myLoop = () => {
     if(this.state.loopActive) {
-      const bpm = parseInt(this.state.bpm || 0)
+      const bpm = parseInt(this.state.bpm || 0, 10)
       const loopTime = 60*8/bpm
 
       this.wavesurfer.skip(loopTime*-1)
 
       setTimeout(this.myLoop.bind(this), loopTime*1000)
     }
-  }
-
-  loop = () => {
-    const bpm = parseInt(this.state.bpm || 1)
-    const loopTime = 60*8/bpm
-
-    this.wavesurfer.skip(loopTime*-1)
   }
 
   setLoop = () => {
@@ -125,37 +120,32 @@ class PlayerAudio extends Component {
   render() {
     if(!this.state.shouldRender) return <div><Icon spin name="spinner fa-4x" /></div>
 
+    const {
+      currentTime,
+      duration,
+      bpm,
+      size,
+      isPlaying,
+      loopActive
+    } = this.state
+
     return (
       <div className="player">
         <div className="player__title">{this.state.title}</div>
         <div className="player__wave" id="waveform"></div>
 
-        <div className="player__media-info">
-          <div className="player__media-info--line">
-            <div className="player__media-info--currentTime">{this.state.currentTime}</div>
-            <div className="player__media-info--duration">{this.state.duration}</div>
-          </div>
-          <div className="player__media-info--line">
-            <div className="player__media-info--bpm">BPM: {this.state.bpm} | Size: {this.state.size}</div>
-          </div>
-        </div>
+        <MediaInfo
+          currentTime={currentTime}
+          duration={duration}
+          bpm={bpm}
+          size={size}
+        />
 
-        <div className="player__media-control">
-        <PlayPause isPlaying={this.state.isPlaying} onClick={() => {
-            (this.state.isPlaying) ? this.wavesurfer.pause() : this.wavesurfer.play()
-          }} />
-          <button onClick={() => this.wavesurfer.stop()}><Icon name="stop" /></button>
-          <button onClick={() => this.setLoop()} style={{background: this.state.loopActive ? 'rgba(0, 255, 0, 0.6)' : null}}>
-            <Icon name="retweet" />
-          </button>
-        </div>
-
-        <div>
-          <input id="slider" type="range" min="1" max="200" defaultValue="1" style={{ width: '100%' }} onInput={(ev) => {
-              var zoomLevel = Number(ev.target.value);
-              this.wavesurfer.zoom(zoomLevel);
-          }} />
-        </div>
+        <MediaControl
+          isPlaying={isPlaying}
+          loopActive={loopActive}
+          setLoop={this.setLoop.bind(this)}
+          wavesurfer={this.wavesurfer} />
 
         <input type="file" id="mediaFile" onChange={this.setNewSong} />
       </div>
