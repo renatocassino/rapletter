@@ -4,6 +4,29 @@ import {Icon} from 'react-fa'
 
 import './PlayerAudio.css'
 
+function fancyTimeFormat(time)
+{
+  // Hours, minutes and seconds
+  var hrs = Math.floor(time / 3600);
+  var mins = Math.floor((time % 3600) / 60);
+  var secs = time % 60;
+
+  // Output like "1:01" or "4:03:59" or "123:03:59"
+  var ret = "";
+
+  if (hrs > 0) {
+      ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
+  }
+
+  if (mins < 10) {
+    mins = `0${mins}`
+  }
+
+  ret += "" + mins + ":" + (secs < 10 ? "0" : "");
+  ret += "" + secs;
+  return ret;
+}
+
 class PlayerAudio extends Component {
   state = {
     shouldRender: false,
@@ -26,8 +49,7 @@ class PlayerAudio extends Component {
 
     fileReader.onload = function() {
       var arrayBuffer = this.result;
-      console.log(arrayBuffer);
-      console.log(arrayBuffer.byteLength);
+      self.setState({ size: (arrayBuffer.byteLength / 1024 / 1024).toFixed(2).toString().replace('.',',') + 'MB' });
 
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       let context = new AudioContext();
@@ -44,6 +66,8 @@ class PlayerAudio extends Component {
       })
     }
 
+    this.setState({ title: ev.target.value.split(/(\\|\/)/g).pop() })
+
     fileReader.readAsArrayBuffer(ev.target.files[0]);
     var url = URL.createObjectURL(ev.target.files[0]);
     this.wavesurfer.load(url)
@@ -59,24 +83,37 @@ class PlayerAudio extends Component {
           container: '#waveform',
           waveColor: 'violet',
           progressColor: 'purple',
+          splitChannels: true,
+          height: 64,
+          barWidth: 2
         })
+
         wavesurfer.on('play', () => {
-          this.setState({isPlaying: true})
+          this.setState({ isPlaying: true })
         })
 
         wavesurfer.on('pause', () => {
-          this.setState({isPlaying: false})
+          this.setState({ isPlaying: false })
         })
 
         wavesurfer.on('stop', () => {
-          this.setState({isPlaying: false})
+          this.setState({ isPlaying: false })
         })
 
         this.wavesurfer = wavesurfer
 
-        wavesurfer.on('ready', function () {
+        wavesurfer.on('ready', () => {
           wavesurfer.play();
+
+          this.setState({ duration: fancyTimeFormat(parseInt(wavesurfer.getDuration())) })
         });
+
+        setInterval(() => {
+          const newTime = fancyTimeFormat(parseInt(this.wavesurfer.getCurrentTime()))
+          if(newTime != this.state.currentTime) {
+            this.setState({ currentTime: newTime })
+          }
+        }, 100)
 
         window.wavesurfer = wavesurfer
       }, 1000)
@@ -129,7 +166,17 @@ class PlayerAudio extends Component {
 
     return (
       <div className="player">
+        <div className="player__title">{this.state.title}</div>
         <div className="player__wave" id="waveform"></div>
+        <div className="player__media-info">
+          <div className="player__media-info--line">
+            <div className="player__media-info--currentTime">{this.state.currentTime}</div>
+            <div className="player__media-info--duration">{this.state.duration}</div>
+          </div>
+          <div className="player__media-info--line">
+            <div className="player__media-info--bpm">BPM: {this.state.bpm} | Size: {this.state.size}</div>
+          </div>
+        </div>
         <div className="player__media-control">
           {this.state.isPlaying ?
             <button onClick={() => this.wavesurfer.pause()}><Icon name="pause" /></button> :
@@ -140,9 +187,6 @@ class PlayerAudio extends Component {
           <button onClick={() => this.lessZoom()}><Icon name="search-minus" /></button>
           <button onClick={() => this.setLoop()} style={{background: this.state.loopActive ? 'rgba(0, 255, 0, 0.6)' : null}}><Icon name="retweet" /></button>
         </div>
-
-        <div>BPM: {this.state.bpm}</div>
-
         <input type="file" id="mediaFile" onChange={this.setNewSong} />
       </div>
     );

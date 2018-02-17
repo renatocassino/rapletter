@@ -1,11 +1,57 @@
 .player {
   width: 80%;
   margin: 0 auto;
+  position: relative;
+}
+
+.player__title {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  pointer-events: none;
+  z-index: 9;
+  color: #fff;
 }
 
 .player__wave {
   background: rgba(100, 100, 100, 0.1);
   border-radius: 10px 10px 0 0;
+  padding-top: 1rem;
+  position: relative;
+}
+
+.player__wave::before {
+  content: '';
+  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(125,185,232,0) 100%);
+  height: 3rem;
+  top: 0;
+  left: 0;
+  border-radius: 10px 10px 0 0;
+  position: absolute;
+  width: 100%;
+}
+
+.player__media-info {
+  background: #777;
+  color: #fff;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.player__media-info--line {
+  display: flex;
+  padding: 0.3rem;
+}
+
+.player__media-info--currentTime {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.player__media-info--duration {
+  flex-grow: 1;
+  text-align: right;
 }
 
 .player__media-control {
