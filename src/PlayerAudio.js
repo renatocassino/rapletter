@@ -15,7 +15,8 @@ class PlayerAudio extends Component {
     bpm: null,
     loopActive: false,
     isPlaying: false,
-    loops: [],
+    loopTime: null,
+    loops: {},
   }
 
   constructor(props) {
@@ -40,7 +41,8 @@ class PlayerAudio extends Component {
       }).then(buffer => {
         try {
           const bpm = detect(buffer);
-          self.setState({ bpm })
+          const loopTime = 60*8/bpm
+          self.setState({ bpm, loopTime })
         } catch (err) {
           console.error(err);
         }
@@ -89,7 +91,7 @@ class PlayerAudio extends Component {
       });
 
       setInterval(this.runEvents, 100)
-    }, 1000)
+    }, 500)
   }
 
   runEvents = () => {
@@ -97,24 +99,29 @@ class PlayerAudio extends Component {
     if(newTime !== this.state.currentTime) {
       this.setState({ currentTime: newTime })
     }
-  }
 
-  myLoop = () => {
-    if(this.state.loopActive) {
-      const bpm = parseInt(this.state.bpm || 0, 10)
-      const loopTime = 60*8/bpm
-
-      this.wavesurfer.skip(loopTime*-1)
-
-      setTimeout(this.myLoop.bind(this), loopTime*1000)
+    // loop
+    if (this.state.loopActive) {
+      const difference = this.wavesurfer.getCurrentTime() - this.state.loops.end
+      if(difference > -0.05 && difference < 1) {
+        const seekTo = (this.state.loops.start + difference) / this.wavesurfer.getDuration()
+        this.wavesurfer.seekTo(seekTo)
+      }
     }
   }
 
   setLoop = () => {
-    const newState = !this.state.loopActive
-    this.setState({loopActive: newState})
+    const currentTime = this.wavesurfer.getCurrentTime()
+    const bpm = parseInt(this.state.bpm || 0, 10)
+    const loopTime = 60*8/bpm
 
-    setTimeout(this.myLoop.bind(this), 300)
+    this.setState({
+      loopActive: !this.state.loopActive,
+      loops: {
+        start: currentTime,
+        end: currentTime + loopTime
+      }
+    })
   }
 
   render() {
