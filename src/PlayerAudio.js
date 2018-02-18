@@ -113,13 +113,12 @@ class PlayerAudio extends Component {
   setLoop = () => {
     const currentTime = this.wavesurfer.getCurrentTime()
     const bpm = parseInt(this.state.bpm || 0, 10)
-    const loopTime = 60*8/bpm
 
     this.setState({
       loopActive: !this.state.loopActive,
       loops: {
         start: currentTime,
-        end: currentTime + loopTime
+        end: currentTime + this.state.loopTime
       }
     })
   }
@@ -133,7 +132,9 @@ class PlayerAudio extends Component {
       bpm,
       size,
       isPlaying,
-      loopActive
+      loopActive,
+      loopTime,
+      loops
     } = this.state
 
     return (
@@ -146,13 +147,16 @@ class PlayerAudio extends Component {
           duration={duration}
           bpm={bpm}
           size={size}
+          loopTime={loopTime}
         />
 
         <MediaControl
           isPlaying={isPlaying}
           loopActive={loopActive}
           setLoop={this.setLoop.bind(this)}
-          wavesurfer={this.wavesurfer} />
+          wavesurfer={this.wavesurfer}
+          loops={loops}
+        />
 
         <input type="file" id="mediaFile" onChange={this.setNewSong} />
       </div>

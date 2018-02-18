@@ -1,11 +1,13 @@
 import React from 'react'
 import { Icon } from 'react-fa'
 import PlayPause from './button/PlayPause'
+import { fancyTimeFormat } from './utils/time'
 
 const MediaControl = ({
   isPlaying,
   loopActive,
   wavesurfer,
+  loops,
   setLoop
 }) => (
   <React.Fragment>
@@ -21,6 +23,11 @@ const MediaControl = ({
         var zoomLevel = Number(ev.target.value);
         wavesurfer.zoom(zoomLevel);
       }} />
+    </div>
+
+    <div>
+      <input type="text" readOnly value={fancyTimeFormat(loops.start || 0)} />
+      <input type="text" readOnly value={fancyTimeFormat(loops.end || 0)} />
     </div>
   </React.Fragment>
 )
