@@ -4,10 +4,17 @@ import { Icon } from 'react-fa'
 import { fancyTimeFormat } from './utils/time'
 import MediaInfo from './MediaInfo'
 import MediaControl from './MediaControl'
+import getGlobal from './utils/getGlobal'
 
 import './PlayerAudio.css'
 
 const WaveSurfer = require('wavesurfer.js')
+
+const getId = function*() {
+  let id = 0
+  while(true)
+    yield id++
+}
 
 class PlayerAudio extends Component {
   state = {
@@ -16,7 +23,7 @@ class PlayerAudio extends Component {
     loopActive: false,
     isPlaying: false,
     loopTime: null,
-    loops: {},
+    loops: [],
   }
 
   constructor(props) {
@@ -31,7 +38,7 @@ class PlayerAudio extends Component {
 
     fileReader.onload = function() {
       var arrayBuffer = this.result;
-      self.setState({ size: (arrayBuffer.byteLength / 1024 / 1024).toFixed(2).toString().replace('.',',') + 'MB' });
+      self.setState({ size: (arrayBuffer.byteLength / 1024 / 1024).toFixed(2).toString().replace('.', ',') + 'MB' });
 
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       let context = new AudioContext();
@@ -61,7 +68,7 @@ class PlayerAudio extends Component {
 
     this.setState({ shouldRender: true })
 
-    setTimeout(() => {
+    getGlobal('WaveSurfer').then((WaveSurfer) => {
       this.wavesurfer = WaveSurfer.create({
         container: '#waveform',
         waveColor: 'violet',
@@ -91,7 +98,7 @@ class PlayerAudio extends Component {
       });
 
       setInterval(this.runEvents, 100)
-    }, 500)
+    })
   }
 
   runEvents = () => {
@@ -102,12 +109,20 @@ class PlayerAudio extends Component {
 
     // loop
     if (this.state.loopActive) {
-      const difference = this.wavesurfer.getCurrentTime() - this.state.loops.end
-      if(difference > -0.05 && difference < 1) {
-        const seekTo = (this.state.loops.start + difference) / this.wavesurfer.getDuration()
-        this.wavesurfer.seekTo(seekTo)
-      }
+      this.state.loops.map((loop) => {
+        const difference = this.wavesurfer.getCurrentTime() - loop.end
+        if(difference > -0.05 && difference < 1) {
+          const seekTo = (loop.start + difference) / this.wavesurfer.getDuration()
+          this.wavesurfer.seekTo(seekTo)
+        }
+      })
     }
+  }
+
+  togleLoop = () => {
+    this.setState({
+      loopActive: !this.state.loopActive
+    })
   }
 
   setLoop = () => {
@@ -115,11 +130,11 @@ class PlayerAudio extends Component {
     const bpm = parseInt(this.state.bpm || 0, 10)
 
     this.setState({
-      loopActive: !this.state.loopActive,
-      loops: {
+      loops: [...this.state.loops, {
+        id: getId().next(),
         start: currentTime,
         end: currentTime + this.state.loopTime
-      }
+      }]
     })
   }
 
@@ -156,6 +171,7 @@ class PlayerAudio extends Component {
           setLoop={this.setLoop.bind(this)}
           wavesurfer={this.wavesurfer}
           loops={loops}
+          togleLoop={this.togleLoop}
         />
 
         <input type="file" id="mediaFile" onChange={this.setNewSong} />
