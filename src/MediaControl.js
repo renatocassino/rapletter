@@ -3,20 +3,18 @@ import PropType from 'prop-types'
 import { Icon } from 'react-fa'
 import PlayPause from './button/PlayPause'
 import { fancyTimeFormat } from './utils/time'
-import { removeCuePoint } from './store/actions'
+import { removeCuePoint, toggleActiveLoop } from './store/actions'
 
 const MediaControl = ({
   isPlaying,
-  loopActive,
   wavesurfer,
-  setLoop,
-  togleLoop
+  setLoop
 }, { store }) => (
   <React.Fragment>
     <div className="player__media-control">
       <PlayPause isPlaying={isPlaying} onClick={() => wavesurfer.playPause()} />
       <button onClick={() => wavesurfer.stop()}><Icon name="stop" /></button>
-      <button onClick={() => togleLoop()} style={{ background: loopActive ? 'rgba(0, 255, 0, 0.6)' : null }}>
+      <button onClick={() => store.dispatch(toggleActiveLoop())} style={{ background: store.getState().mediaControl.loopActive ? 'rgba(0, 255, 0, 0.6)' : null }}>
         <Icon name="toggle-on" />
       </button>
       <button onClick={() => setLoop()}><Icon name="retweet" /></button>
@@ -41,8 +39,7 @@ const MediaControl = ({
 )
 
 MediaControl.contextTypes = {
-  store: PropType.object,
-  dispatch: PropType.func
+  store: PropType.object
 }
 
 export default MediaControl

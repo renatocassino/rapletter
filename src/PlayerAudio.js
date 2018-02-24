@@ -12,17 +12,18 @@ import './PlayerAudio.css'
 
 // const WaveSurfer = require('wavesurfer.js')
 
-const getId = function*() {
+const idGenerator = function*() {
   let id = 0
   while(true)
-    yield id++
+    yield ++id
 }
+
+const getId = idGenerator()
 
 class PlayerAudio extends Component {
   state = {
     shouldRender: false,
     bpm: null,
-    loopActive: false,
     isPlaying: false,
     loopTime: null
   }
@@ -109,7 +110,7 @@ class PlayerAudio extends Component {
     }
 
     // loop
-    if (this.state.loopActive) {
+    if (this.context.store.getState().mediaControl.loopActive) {
       this.context.store.getState().cuePoints.forEach((loop) => {
         const difference = this.wavesurfer.getCurrentTime() - loop.end
         if(difference > -0.05 && difference < 1) {
@@ -120,17 +121,11 @@ class PlayerAudio extends Component {
     }
   }
 
-  togleLoop = () => {
-    this.setState({
-      loopActive: !this.state.loopActive
-    })
-  }
-
   setLoop = () => {
     const currentTime = this.wavesurfer.getCurrentTime()
 
     const cuePoint = {
-      id: getId().next(),
+      id: getId.next().value,
       start: currentTime,
       end: currentTime + this.state.loopTime
     }
@@ -147,7 +142,6 @@ class PlayerAudio extends Component {
       bpm,
       size,
       isPlaying,
-      loopActive,
       loopTime,
     } = this.state
 
@@ -166,10 +160,8 @@ class PlayerAudio extends Component {
 
         <MediaControl
           isPlaying={isPlaying}
-          loopActive={loopActive}
           setLoop={this.setLoop.bind(this)}
           wavesurfer={this.wavesurfer}
-          togleLoop={this.togleLoop}
         />
 
         <input type="file" id="mediaFile" onChange={this.setNewSong} />
