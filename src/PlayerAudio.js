@@ -8,7 +8,7 @@ import getGlobal from './utils/getGlobal'
 
 import './PlayerAudio.css'
 
-const WaveSurfer = require('wavesurfer.js')
+// const WaveSurfer = require('wavesurfer.js')
 
 const getId = function*() {
   let id = 0
@@ -109,7 +109,7 @@ class PlayerAudio extends Component {
 
     // loop
     if (this.state.loopActive) {
-      this.state.loops.map((loop) => {
+      this.state.loops.forEach((loop) => {
         const difference = this.wavesurfer.getCurrentTime() - loop.end
         if(difference > -0.05 && difference < 1) {
           const seekTo = (loop.start + difference) / this.wavesurfer.getDuration()
@@ -127,7 +127,6 @@ class PlayerAudio extends Component {
 
   setLoop = () => {
     const currentTime = this.wavesurfer.getCurrentTime()
-    const bpm = parseInt(this.state.bpm || 0, 10)
 
     this.setState({
       loops: [...this.state.loops, {

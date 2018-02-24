@@ -5,7 +5,7 @@ export const fancyTimeFormat = (timeInSeconds) => {
   var mins = Math.floor((time % 3600) / 60)
   var secs = time % 60
 
-  // Output like "1:01" or "4:03:59" or "123:03:59"
+  // Output like "01:01" or "04:03:59" or "123:03:59"
   var result = ''
 
   if (hours > 0) {
