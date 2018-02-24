@@ -1,7 +1,8 @@
 import initialState from '../state'
-
-export const ADD_CUE_POINT = 'ADD_CUE_POINT'
-export const REMOVE_CUE_POINT = 'REMOVE_CUE_POINT'
+import {
+  ADD_CUE_POINT,
+  REMOVE_CUE_POINT
+} from '../actions'
 
 export const cuePointsReducer = (state = initialState.cuePoints, action) => {
   switch(action.type) {

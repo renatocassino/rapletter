@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
+import PropType from 'prop-types'
 import detect from 'bpm-detective'
 import { Icon } from 'react-fa'
 import { fancyTimeFormat } from './utils/time'
 import MediaInfo from './MediaInfo'
 import MediaControl from './MediaControl'
 import getGlobal from './utils/getGlobal'
+import { addCuePoint } from './store/actions'
 
 import './PlayerAudio.css'
 
@@ -22,8 +24,7 @@ class PlayerAudio extends Component {
     bpm: null,
     loopActive: false,
     isPlaying: false,
-    loopTime: null,
-    loops: [],
+    loopTime: null
   }
 
   constructor(props) {
@@ -109,7 +110,7 @@ class PlayerAudio extends Component {
 
     // loop
     if (this.state.loopActive) {
-      this.state.loops.forEach((loop) => {
+      this.context.store.getState().cuePoints.forEach((loop) => {
         const difference = this.wavesurfer.getCurrentTime() - loop.end
         if(difference > -0.05 && difference < 1) {
           const seekTo = (loop.start + difference) / this.wavesurfer.getDuration()
@@ -128,13 +129,13 @@ class PlayerAudio extends Component {
   setLoop = () => {
     const currentTime = this.wavesurfer.getCurrentTime()
 
-    this.setState({
-      loops: [...this.state.loops, {
-        id: getId().next(),
-        start: currentTime,
-        end: currentTime + this.state.loopTime
-      }]
-    })
+    const cuePoint = {
+      id: getId().next(),
+      start: currentTime,
+      end: currentTime + this.state.loopTime
+    }
+
+    this.context.store.dispatch(addCuePoint(cuePoint))
   }
 
   render() {
@@ -148,7 +149,6 @@ class PlayerAudio extends Component {
       isPlaying,
       loopActive,
       loopTime,
-      loops
     } = this.state
 
     return (
@@ -169,7 +169,6 @@ class PlayerAudio extends Component {
           loopActive={loopActive}
           setLoop={this.setLoop.bind(this)}
           wavesurfer={this.wavesurfer}
-          loops={loops}
           togleLoop={this.togleLoop}
         />
 
@@ -177,6 +176,10 @@ class PlayerAudio extends Component {
       </div>
     );
   }
+}
+
+PlayerAudio.contextTypes = {
+  store: PropType.object
 }
 
 export default PlayerAudio

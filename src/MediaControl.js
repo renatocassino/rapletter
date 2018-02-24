@@ -1,16 +1,17 @@
 import React from 'react'
+import PropType from 'prop-types'
 import { Icon } from 'react-fa'
 import PlayPause from './button/PlayPause'
 import { fancyTimeFormat } from './utils/time'
+import { removeCuePoint } from './store/actions'
 
 const MediaControl = ({
   isPlaying,
   loopActive,
   wavesurfer,
-  loops,
   setLoop,
   togleLoop
-}) => (
+}, { store }) => (
   <React.Fragment>
     <div className="player__media-control">
       <PlayPause isPlaying={isPlaying} onClick={() => wavesurfer.playPause()} />
@@ -27,13 +28,21 @@ const MediaControl = ({
       }} />
     </div>
 
-    {loops.map((loop) => (
-      <div key={loop.id}>
-        <input type="text" readOnly value={fancyTimeFormat(loop.start || 0)} />
-        <input type="text" readOnly value={fancyTimeFormat(loop.end || 0)} />
+    {store.getState().cuePoints.map((cuePoint) => (
+      <div key={cuePoint.id}>
+        <input type="text" readOnly value={fancyTimeFormat(cuePoint.start || 0)} />
+        <input type="text" readOnly value={fancyTimeFormat(cuePoint.end || 0)} />
+        <button onClick={() => store.dispatch(removeCuePoint(cuePoint.id))}>
+          <Icon name="times" />
+        </button>
       </div>
     ))}
   </React.Fragment>
 )
+
+MediaControl.contextTypes = {
+  store: PropType.object,
+  dispatch: PropType.func
+}
 
 export default MediaControl

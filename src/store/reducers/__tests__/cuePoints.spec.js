@@ -1,7 +1,8 @@
-import cuePointsReducer, {
+import cuePointsReducer from '../cuePointsReducer'
+import {
   ADD_CUE_POINT,
   REMOVE_CUE_POINT
-} from '../cuePointsReducer'
+} from '../../actions'
 
 describe('cuePointsReducer', () => {
   it('add new cuepoint when state is initial', () => {
