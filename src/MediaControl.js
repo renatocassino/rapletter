@@ -30,7 +30,10 @@ const MediaControl = ({
 
       {store.getState().cuePoints.map((cuePoint) => (
         <div key={cuePoint.id}>
-          <button><Icon name="play" /></button>
+          <button onClick={() => {
+            const seekTo = cuePoint.start / wavesurfer.getDuration()
+            wavesurfer.seekTo(seekTo)
+          }}><Icon name="play" /></button>
           <input type="text" readOnly value={fancyTimeFormat(cuePoint.start || 0)} />
           <input type="text" readOnly value={fancyTimeFormat(cuePoint.end || 0)} />
           <button onClick={() => store.dispatch(removeCuePoint(cuePoint.id))}>
