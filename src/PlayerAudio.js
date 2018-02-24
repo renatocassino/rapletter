@@ -6,7 +6,7 @@ import { fancyTimeFormat } from './utils/time'
 import MediaInfo from './MediaInfo'
 import MediaControl from './MediaControl'
 import getGlobal from './utils/getGlobal'
-import { addCuePoint } from './store/actions'
+import { addCuePoint, setMediaInfo } from './store/actions'
 
 import './PlayerAudio.css'
 
@@ -22,10 +22,7 @@ const getId = idGenerator()
 
 class PlayerAudio extends Component {
   state = {
-    shouldRender: false,
-    bpm: null,
-    isPlaying: false,
-    loopTime: null
+    shouldRender: false
   }
 
   constructor(props) {
@@ -36,11 +33,11 @@ class PlayerAudio extends Component {
   setNewSong = (ev) => {
     /** Getting BPM */
     var fileReader  = new FileReader();
-    const self = this
+    const dispatch = this.context.store.dispatch
 
     fileReader.onload = function() {
       var arrayBuffer = this.result;
-      self.setState({ size: (arrayBuffer.byteLength / 1024 / 1024).toFixed(2).toString().replace('.', ',') + 'MB' });
+      const size = (arrayBuffer.byteLength / 1024 / 1024).toFixed(2).toString().replace('.', ',') + 'MB'
 
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       let context = new AudioContext();
@@ -51,14 +48,14 @@ class PlayerAudio extends Component {
         try {
           const bpm = detect(buffer);
           const loopTime = 60*8/bpm
-          self.setState({ bpm, loopTime })
+          dispatch(setMediaInfo({ bpm, loopTime, size }))
         } catch (err) {
           console.error(err);
         }
       })
     }
 
-    this.setState({ title: ev.target.value.split(/(\\|\/)/g).pop() })
+    this.context.store.dispatch(setMediaInfo({ title: ev.target.value.split(/(\\|\/)/g).pop() }))
 
     fileReader.readAsArrayBuffer(ev.target.files[0]);
     var url = URL.createObjectURL(ev.target.files[0]);
@@ -80,23 +77,25 @@ class PlayerAudio extends Component {
         barWidth: 2
       })
 
+      const dispatch = this.context.store.dispatch
+
       this.wavesurfer.on('play', () => {
-        this.setState({ isPlaying: true })
+        dispatch(setMediaInfo({ isPlaying: true }))
       })
 
       this.wavesurfer.on('pause', () => {
-        this.setState({ isPlaying: false })
+        dispatch(setMediaInfo({ isPlaying: false }))
       })
 
       this.wavesurfer.on('stop', () => {
-        this.setState({ isPlaying: false })
+        dispatch(setMediaInfo({ isPlaying: false }))
       })
 
       this.wavesurfer.on('ready', () => {
         this.wavesurfer.play();
 
         const duration = this.wavesurfer.getDuration()
-        this.setState({ duration: fancyTimeFormat(duration) })
+        this.context.store.dispatch(setMediaInfo({ duration: fancyTimeFormat(duration) }))
       });
 
       setInterval(this.runEvents, 100)
@@ -127,7 +126,7 @@ class PlayerAudio extends Component {
     const cuePoint = {
       id: getId.next().value,
       start: currentTime,
-      end: currentTime + this.state.loopTime
+      end: currentTime + this.context.store.getState().mediaInfo.loopTime
     }
 
     this.context.store.dispatch(addCuePoint(cuePoint))
@@ -138,28 +137,22 @@ class PlayerAudio extends Component {
 
     const {
       currentTime,
-      duration,
-      bpm,
-      size,
-      isPlaying,
-      loopTime,
     } = this.state
+
+    const {
+      mediaInfo
+    } = this.context.store.getState()
 
     return (
       <div className="player">
-        <div className="player__title">{this.state.title}</div>
+        <div className="player__title">{mediaInfo.title}</div>
         <div className="player__wave" id="waveform"></div>
 
         <MediaInfo
           currentTime={currentTime}
-          duration={duration}
-          bpm={bpm}
-          size={size}
-          loopTime={loopTime}
         />
 
         <MediaControl
-          isPlaying={isPlaying}
           setLoop={this.setLoop.bind(this)}
           wavesurfer={this.wavesurfer}
         />

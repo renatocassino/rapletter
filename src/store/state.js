@@ -5,6 +5,7 @@ export const cuePoint = {
 }
 
 export const mediaInfo = {
+  title: '',
   duration: null,
   bpm: null,
   size: 0,
