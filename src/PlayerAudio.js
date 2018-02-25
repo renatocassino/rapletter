@@ -66,6 +66,7 @@ class PlayerAudio extends Component {
         this.context.store.dispatch(setMediaInfo({ duration: fancyTimeFormat(duration) }))
       });
 
+      window.wavesurfer = this.wavesurfer
       setInterval(this.runEvents, 100)
     })
   }

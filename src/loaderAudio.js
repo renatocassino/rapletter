@@ -4,35 +4,41 @@ import { setMediaInfo } from './store/actions'
 import detect from 'bpm-detective'
 
 class LoaderAudio extends React.Component {
+  loadAudioBuffer = (arrayBuffer) => {
+    const AudioContext = window.AudioContext || window.webkitAudioContext
+    let context = new AudioContext()
+
+    const { dispatch } = this.context.store
+
+    new Promise((resolve, reject) => {
+      context.decodeAudioData(arrayBuffer, resolve, reject)
+    }).then(buffer => {
+      try {
+        const size = (arrayBuffer.byteLength / 1024 / 1024).toFixed(2).toString().replace('.', ',') + 'MB'
+        const bpm = detect(buffer)
+        const loopTime = 60*8/bpm
+        dispatch(setMediaInfo({ bpm, loopTime, size }))
+      } catch (err) {
+        console.error(err)
+      }
+    })
+  }
+
   setNewSong = (ev) => {
     /** Getting BPM */
-    var fileReader  = new FileReader();
+    var fileReader  = new FileReader()
     const dispatch = this.context.store.dispatch
+    const self = this
 
     fileReader.onload = function() {
-      var arrayBuffer = this.result;
-      const size = (arrayBuffer.byteLength / 1024 / 1024).toFixed(2).toString().replace('.', ',') + 'MB'
-
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      let context = new AudioContext();
-
-      new Promise((resolve, reject) => {
-        context.decodeAudioData(arrayBuffer, resolve, reject)
-      }).then(buffer => {
-        try {
-          const bpm = detect(buffer);
-          const loopTime = 60*8/bpm
-          dispatch(setMediaInfo({ bpm, loopTime, size }))
-        } catch (err) {
-          console.error(err);
-        }
-      })
+      var arrayBuffer = this.result
+      self.loadAudioBuffer(arrayBuffer)
     }
 
     this.context.store.dispatch(setMediaInfo({ title: ev.target.value.split(/(\\|\/)/g).pop() }))
 
-    fileReader.readAsArrayBuffer(ev.target.files[0]);
-    var url = URL.createObjectURL(ev.target.files[0]);
+    fileReader.readAsArrayBuffer(ev.target.files[0])
+    var url = URL.createObjectURL(ev.target.files[0])
     this.props.wavesurfer.load(url)
   }
 
@@ -40,27 +46,10 @@ class LoaderAudio extends React.Component {
     const url = ev.target.value
     const { dispatch } = this.context.store
 
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    let context = new AudioContext();
-
     fetch(url)
       // Get response as ArrayBuffer
       .then(response => response.arrayBuffer())
-      .then(arrayBuffer => {
-        // Decode audio into an AudioBuffer
-        new Promise((resolve, reject) => {
-          context.decodeAudioData(arrayBuffer, resolve, reject)
-        }).then(buffer => {
-        try {
-          const size = (arrayBuffer.byteLength / 1024 / 1024).toFixed(2).toString().replace('.', ',') + 'MB'
-          const bpm = detect(buffer);
-          const loopTime = 60*8/bpm
-          dispatch(setMediaInfo({ bpm, loopTime, size }))
-        } catch (err) {
-          console.error(err);
-        }
-      })
-    })
+      .then(this.loadAudioBuffer)
 
     this.props.wavesurfer.load(url)
   }
