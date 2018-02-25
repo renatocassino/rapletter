@@ -62,6 +62,35 @@ class PlayerAudio extends Component {
     this.wavesurfer.load(url)
   }
 
+  setNewSongUsingUrl = (ev) => {
+    const url = ev.target.value
+    const { dispatch } = this.context.store
+
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let context = new AudioContext();
+
+    fetch(url)
+      // Get response as ArrayBuffer
+      .then(response => response.arrayBuffer())
+      .then(arrayBuffer => {
+        // Decode audio into an AudioBuffer
+        new Promise((resolve, reject) => {
+          context.decodeAudioData(arrayBuffer, resolve, reject)
+        }).then(buffer => {
+        try {
+          const size = (arrayBuffer.byteLength / 1024 / 1024).toFixed(2).toString().replace('.', ',') + 'MB'
+          const bpm = detect(buffer);
+          const loopTime = 60*8/bpm
+          dispatch(setMediaInfo({ bpm, loopTime, size }))
+        } catch (err) {
+          console.error(err);
+        }
+      })
+    })
+
+    this.wavesurfer.load(url)
+  }
+
   componentDidMount() {
     if(typeof window === 'undefined') return
 
@@ -74,7 +103,7 @@ class PlayerAudio extends Component {
         progressColor: 'purple',
         splitChannels: true,
         height: 64,
-        barWidth: 2
+        barWidth: 0
       })
 
       const dispatch = this.context.store.dispatch
@@ -158,6 +187,8 @@ class PlayerAudio extends Component {
         />
 
         <input type="file" id="mediaFile" onChange={this.setNewSong} />
+        <input type="text" id="mediaFileUrl" onBlur={this.setNewSongUsingUrl} />
+        <span>https://wavesurfer-js.org/example/media/demo.wav</span>
       </div>
     );
   }
