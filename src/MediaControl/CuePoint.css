@@ -1,0 +1,54 @@
+.cue-point {
+  flex-grow: 1;
+  background: #ccc;
+}
+
+.cue-point__points-area {
+  background: #c7c7c7;
+}
+
+.cue-point__point {
+  width: 100%;
+  display: flex;
+  position: relative;
+}
+
+.cue-point__point::before {
+  content: '';
+  height: 100%;
+  width: 3px;
+  background: #070;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.cue-point__point:focus-within, .cue-point__point:hover {
+  background: #ddd;
+}
+
+.cue-point__point:focus-within::before, .cue-point__point:hover::before {
+  background: #090;
+}
+
+.cue-point__column {
+  flex-grow: 1;
+}
+
+.cue-point__timers {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 3;
+  padding: 0.3rem 2rem;
+}
+
+.cue-point__timers__field {
+  margin: 0.3rem;
+}
+
+.cue-point__btn-close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+}

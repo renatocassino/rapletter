@@ -56,10 +56,10 @@ class LoaderAudio extends React.Component {
 
   render() {
     return (
-      <div>
-        <input type="file" id="mediaFile" onChange={this.setNewSong} />
-        <input type="text" id="mediaFileUrl" onBlur={this.setNewSongUsingUrl} />
-        <span>https://wavesurfer-js.org/example/media/demo.wav</span>
+      <div style={{ flexGrow: 1 }}>
+        <div><input type="file" id="mediaFile" onChange={this.setNewSong} /></div>
+        <input placeholder="Put your audio url here" type="text" id="mediaFileUrl" onBlur={this.setNewSongUsingUrl} />
+        <div>Example: http://tacnoman.com/songs/royce-boom.mp3</div>
       </div>
     )
   }

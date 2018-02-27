@@ -3,10 +3,11 @@ import PropType from 'prop-types'
 import { Icon } from 'react-fa'
 import { fancyTimeFormat } from './utils/time'
 import MediaInfo from './MediaInfo'
-import MediaControl from './MediaControl'
+import { MediaControl } from './MediaControl'
 import getGlobal from './utils/getGlobal'
 import { addCuePoint, setMediaInfo } from './store/actions'
 import LoaderAudio from './loaderAudio'
+import CuePoints from './MediaControl/CuePoint'
 
 import './PlayerAudio.css'
 
@@ -109,7 +110,8 @@ class PlayerAudio extends Component {
     } = this.state
 
     const {
-      mediaInfo
+      mediaInfo,
+      cuePoints
     } = this.context.store.getState()
 
     return (
@@ -122,11 +124,15 @@ class PlayerAudio extends Component {
         />
 
         <MediaControl
-          setLoop={this.setLoop.bind(this)}
           wavesurfer={this.wavesurfer}
         />
 
-        <LoaderAudio wavesurfer={this.wavesurfer} />
+        <div style={{
+          display: 'flex'
+        }}>
+          <CuePoints cuePoints={cuePoints} wavesurfer={this.wavesurfer} setLoop={this.setLoop} />
+          <LoaderAudio wavesurfer={this.wavesurfer} />
+        </div>
       </div>
     );
   }
