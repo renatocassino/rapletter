@@ -1,16 +1,17 @@
 import React from 'react'
-import PropType from 'prop-types'
+import PropTypes from 'prop-types'
 import { fancyTimeFormat } from './utils/time'
 
 const MediaInfo = ({
   currentTime,
-}, { store }) => {
+}, { currentSong }) => {
+
   const {
     bpm,
     duration,
     loopTime,
     size
-  } = store.getState().mediaInfo
+  } = currentSong.mediaInfo
 
   return (
     <div className="player__media-info">
@@ -25,8 +26,12 @@ const MediaInfo = ({
   )
 }
 
+MediaInfo.propTypes = {
+  currentTime: PropTypes.any
+}
+
 MediaInfo.contextTypes = {
-  store: PropType.object
+  currentSong: PropTypes.object
 }
 
 export default MediaInfo

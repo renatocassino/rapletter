@@ -4,6 +4,7 @@ import { Icon } from 'react-fa'
 import { fancyTimeFormat } from './utils/time'
 import MediaInfo from './MediaInfo'
 import { MediaControl } from './MediaControl'
+import Playlist from './Playlist'
 import getGlobal from './utils/getGlobal'
 import {
   addCuePoint,
@@ -38,9 +39,11 @@ class PlayerAudio extends Component {
   componentDidMount() {
     if(typeof window === 'undefined') return
 
-    this.setState({ shouldRender: true })
+    const dispatch = this.context.store.dispatch
 
     getGlobal('WaveSurfer').then((WaveSurfer) => {
+      this.setState({ shouldRender: true })
+
       this.wavesurfer = WaveSurfer.create({
         container: '#waveform',
         waveColor: 'violet',
@@ -49,8 +52,6 @@ class PlayerAudio extends Component {
         height: 64,
         barWidth: 0
       })
-
-      const dispatch = this.context.store.dispatch
 
       this.wavesurfer.on('play', () => {
         dispatch(setIsPlaying(true))
@@ -61,7 +62,7 @@ class PlayerAudio extends Component {
       })
 
       this.wavesurfer.on('stop', () => {
-        dispatch(setIsPlaying())
+        dispatch(setIsPlaying(false))
       })
 
       this.wavesurfer.on('ready', () => {
@@ -69,7 +70,7 @@ class PlayerAudio extends Component {
 
         const duration = this.wavesurfer.getDuration()
         dispatch(setMediaInfo({ duration: fancyTimeFormat(duration) }))
-      });
+      })
 
       window.wavesurfer = this.wavesurfer
       setInterval(this.runEvents, 100)
@@ -83,7 +84,7 @@ class PlayerAudio extends Component {
     }
 
     // loop
-    if (this.context.store.getState().mediaControl.loopActive) {
+    if (this.context.store.getState().player.loopActive) {
       this.context.store.getState().cuePoints.forEach((loop) => {
         const difference = this.wavesurfer.getCurrentTime() - loop.end
         if(difference > -0.05 && difference < 1) {
@@ -96,11 +97,12 @@ class PlayerAudio extends Component {
 
   setLoop = () => {
     const currentTime = this.wavesurfer.getCurrentTime()
+    const { currentSong } = this.context
 
     const cuePoint = {
       id: getId.next().value,
       start: currentTime,
-      end: currentTime + this.context.store.getState().mediaInfo.loopTime
+      end: currentTime + currentSong.mediaInfo.loopTime
     }
 
     this.context.store.dispatch(addCuePoint(cuePoint))
@@ -109,14 +111,18 @@ class PlayerAudio extends Component {
   render() {
     if(!this.state.shouldRender) return <div><Icon spin name="spinner fa-4x" /></div>
 
+    const state = this.context.store.getState()
+    const { currentSong } = this.context
+
     const {
       currentTime,
     } = this.state
 
     const {
-      mediaInfo,
-      cuePoints
-    } = this.context.store.getState()
+      mediaInfo
+    } = currentSong
+
+    const { cuePoints } = state
 
     return (
       <div className="player">
@@ -136,14 +142,16 @@ class PlayerAudio extends Component {
         }}>
           <CuePoints cuePoints={cuePoints} wavesurfer={this.wavesurfer} setLoop={this.setLoop} />
           <LoaderAudio wavesurfer={this.wavesurfer} />
+          <Playlist wavesurfer={this.wavesurfer} />
         </div>
       </div>
-    );
+    )
   }
 }
 
 PlayerAudio.contextTypes = {
-  store: PropType.object
+  store: PropType.object,
+  currentSong: PropType.object
 }
 
 export default PlayerAudio

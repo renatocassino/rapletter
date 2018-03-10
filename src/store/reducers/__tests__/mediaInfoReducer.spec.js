@@ -1,7 +1,6 @@
 import mediaInfoReducer from '../mediaInfoReducer'
 import {
-  SET_MEDIA_INFO,
-  TOGGLE_ACTIVE_LOOP
+  SET_MEDIA_INFO
 } from '../../actions'
 
 describe('mediaInfoReducer', () => {

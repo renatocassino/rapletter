@@ -1,4 +1,4 @@
 export * from './cuePointActions'
 export * from './mediaInfoActions'
-export * from './mediaControlActions'
+export * from './playlistActions'
 export * from './playerActions'

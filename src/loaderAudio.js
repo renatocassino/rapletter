@@ -1,6 +1,6 @@
 import React from 'react'
 import PropType from 'prop-types'
-import { setMediaInfo } from './store/actions'
+import { setMediaInfo, addSongToPlaylist } from './store/actions'
 import detect from 'bpm-detective'
 
 class LoaderAudio extends React.Component {
@@ -8,16 +8,15 @@ class LoaderAudio extends React.Component {
     const AudioContext = window.AudioContext || window.webkitAudioContext
     let context = new AudioContext()
 
-    const { dispatch } = this.context.store
-
-    new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       context.decodeAudioData(arrayBuffer, resolve, reject)
     }).then(buffer => {
       try {
         const size = (arrayBuffer.byteLength / 1024 / 1024).toFixed(2).toString().replace('.', ',') + 'MB'
         const bpm = detect(buffer)
         const loopTime = 60*8/bpm
-        dispatch(setMediaInfo({ bpm, loopTime, size }))
+        return { bpm, loopTime, size }
+
       } catch (err) {
         console.error(err)
       }
@@ -29,16 +28,19 @@ class LoaderAudio extends React.Component {
     var fileReader  = new FileReader()
     const dispatch = this.context.store.dispatch
     const self = this
+    const title = ev.target.value.split(/(\\|\/)/g).pop()
+    var url = URL.createObjectURL(ev.target.files[0])
 
-    fileReader.onload = function() {
+    fileReader.onload = async function() {
       var arrayBuffer = this.result
-      self.loadAudioBuffer(arrayBuffer)
+      const songState = await self.loadAudioBuffer(arrayBuffer)
+      const newState = Object.assign({}, songState, { title, url })
+
+      dispatch(setMediaInfo(newState))
+      dispatch(addSongToPlaylist({ mediaInfo: newState }))
     }
 
-    dispatch(setMediaInfo({ title: ev.target.value.split(/(\\|\/)/g).pop() }))
-
     fileReader.readAsArrayBuffer(ev.target.files[0])
-    var url = URL.createObjectURL(ev.target.files[0])
     this.props.wavesurfer.load(url)
   }
 

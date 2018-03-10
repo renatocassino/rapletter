@@ -9,28 +9,27 @@ export const mediaInfo = {
   duration: null,
   bpm: null,
   size: 0,
-  loopTime: 0
-}
-
-export const mediaControl = {
-  loopActive: false
+  loopTime: 0,
+  url: ''
 }
 
 export const song = {
   mediaInfo,
-  mediaControl,
   cuePoints: []
 }
 
 export const player = {
   isPlaying: false,
+  loopActive: false
 }
 
-export const songs = []
+export const playlist = {
+  currentSong: 0,
+  songs: []
+}
 
 export default {
   player,
-  songs,
-  mediaInfo,
+  playlist,
   cuePoints: []
 }

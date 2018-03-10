@@ -46,17 +46,17 @@ CuePoint.contextTypes = {
   })
 }
 
-const CuePoints = ({ cuePoints, wavesurfer, setLoop }, { store }) => (
+const CuePoints = ({ cuePoints, wavesurfer, setLoop }, { store, currentSong }) => (
   <div className="cue-point">
     <div className="cue-point__control">
       <span>CuePoints</span>
-      <button onClick={() => store.dispatch(toggleActiveLoop())} style={{ background: store.getState().mediaControl.loopActive ? 'rgba(0, 255, 0, 0.6)' : null }}>
+      <button onClick={() => store.dispatch(toggleActiveLoop())} style={{ background: store.getState().player.loopActive ? 'rgba(0, 255, 0, 0.6)' : null }}>
         <Icon name="retweet" />
       </button>
       <button onClick={() => setLoop()}><Icon name="plus" /></button>
     </div>
     <div className="cue-point__points-area">
-      {cuePoints.map((cuePoint) => (
+      {currentSong.cuePoints.map((cuePoint) => (
         <CuePoint
           key={cuePoint.id}
           cuePoint={cuePoint}
@@ -70,7 +70,8 @@ CuePoints.contextTypes = {
   store: PropType.shape({
     dispatch: PropType.func,
     getState: PropType.func
-  })
+  }),
+  currentSong: PropType.object
 }
 
 export default CuePoints

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropType from 'prop-types'
 import PlayerAudio from './PlayerAudio'
 import { Provider } from 'react-redux'
+import SongProvider from './SongProvider'
 
 import './App.css'
 
@@ -13,9 +14,11 @@ class App extends Component {
   render() {
     return (
       <Provider store={this.props.store}>
-        <div className="App">
-          <PlayerAudio />
-        </div>
+        <SongProvider>
+          <div className="App">
+            <PlayerAudio />
+          </div>
+        </SongProvider>
       </Provider>
     )
   }
