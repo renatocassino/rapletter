@@ -6,7 +6,7 @@ import PlayPause from '../button/PlayPause'
 const MediaControl = ({
   wavesurfer = {}
 }, { store }) => {
-  const { isPlaying } = store.getState().mediaInfo
+  const { isPlaying } = store.getState().player
 
   return (
     <React.Fragment>

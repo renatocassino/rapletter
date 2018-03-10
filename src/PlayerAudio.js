@@ -5,7 +5,11 @@ import { fancyTimeFormat } from './utils/time'
 import MediaInfo from './MediaInfo'
 import { MediaControl } from './MediaControl'
 import getGlobal from './utils/getGlobal'
-import { addCuePoint, setMediaInfo } from './store/actions'
+import {
+  addCuePoint,
+  setMediaInfo,
+  setIsPlaying
+} from './store/actions'
 import LoaderAudio from './loaderAudio'
 import CuePoints from './MediaControl/CuePoint'
 
@@ -49,22 +53,22 @@ class PlayerAudio extends Component {
       const dispatch = this.context.store.dispatch
 
       this.wavesurfer.on('play', () => {
-        dispatch(setMediaInfo({ isPlaying: true }))
+        dispatch(setIsPlaying(true))
       })
 
       this.wavesurfer.on('pause', () => {
-        dispatch(setMediaInfo({ isPlaying: false }))
+        dispatch(setIsPlaying(false))
       })
 
       this.wavesurfer.on('stop', () => {
-        dispatch(setMediaInfo({ isPlaying: false }))
+        dispatch(setIsPlaying())
       })
 
       this.wavesurfer.on('ready', () => {
         this.wavesurfer.play();
 
         const duration = this.wavesurfer.getDuration()
-        this.context.store.dispatch(setMediaInfo({ duration: fancyTimeFormat(duration) }))
+        dispatch(setMediaInfo({ duration: fancyTimeFormat(duration) }))
       });
 
       window.wavesurfer = this.wavesurfer

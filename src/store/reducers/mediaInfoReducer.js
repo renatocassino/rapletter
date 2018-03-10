@@ -11,8 +11,8 @@ const mediaInfoReducer = (state = initialState.mediaInfo, action) => {
   case TOGGLE_ACTIVE_LOOP: return Object.assign({}, state, {
     loopActive: !state.loopActive
   })
+  default: return state
   }
-  return state
 }
 
 export default mediaInfoReducer

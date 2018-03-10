@@ -35,7 +35,7 @@ class LoaderAudio extends React.Component {
       self.loadAudioBuffer(arrayBuffer)
     }
 
-    this.context.store.dispatch(setMediaInfo({ title: ev.target.value.split(/(\\|\/)/g).pop() }))
+    dispatch(setMediaInfo({ title: ev.target.value.split(/(\\|\/)/g).pop() }))
 
     fileReader.readAsArrayBuffer(ev.target.files[0])
     var url = URL.createObjectURL(ev.target.files[0])
@@ -44,7 +44,6 @@ class LoaderAudio extends React.Component {
 
   setNewSongUsingUrl = (ev) => {
     const url = ev.target.value
-    const { dispatch } = this.context.store
 
     fetch(url)
       // Get response as ArrayBuffer

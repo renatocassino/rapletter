@@ -16,7 +16,21 @@ export const mediaControl = {
   loopActive: false
 }
 
+export const song = {
+  mediaInfo,
+  mediaControl,
+  cuePoints: []
+}
+
+export const player = {
+  isPlaying: false,
+}
+
+export const songs = []
+
 export default {
+  player,
+  songs,
   mediaInfo,
   cuePoints: []
 }

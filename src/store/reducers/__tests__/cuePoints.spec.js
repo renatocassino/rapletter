@@ -24,7 +24,7 @@ describe('cuePointsReducer', () => {
     const state = cuePointsReducer([initialState], { type: ADD_CUE_POINT, cuePoint })
     expect(state).toEqual([initialState, cuePoint])
   })
-  
+
   it('remove cuepoint passing id', () => {
     const initialState = [
       { start: 111, end: 122, id: 1 },
