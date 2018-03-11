@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
 import PropType from 'prop-types'
-import { Icon } from 'react-fa'
 import { fancyTimeFormat } from './utils/time'
 import MediaInfo from './MediaInfo'
 import { MediaControl } from './MediaControl'
 import Playlist from './Playlist'
+import Spinner from './components/Spinner'
 import getGlobal from './utils/getGlobal'
 import {
-  addCuePoint,
   setMediaInfo,
   setIsPlaying
 } from './store/actions'
@@ -17,14 +16,6 @@ import CuePoints from './MediaControl/CuePoint'
 import './PlayerAudio.css'
 
 // const WaveSurfer = require('wavesurfer.js')
-
-const idGenerator = function*() {
-  let id = 0
-  while(true)
-    yield ++id
-}
-
-const getId = idGenerator()
 
 class PlayerAudio extends Component {
   state = {
@@ -95,21 +86,8 @@ class PlayerAudio extends Component {
     }
   }
 
-  setLoop = () => {
-    const currentTime = this.wavesurfer.getCurrentTime()
-    const { currentSong } = this.context
-
-    const cuePoint = {
-      id: getId.next().value,
-      start: currentTime,
-      end: currentTime + currentSong.mediaInfo.loopTime
-    }
-
-    this.context.store.dispatch(addCuePoint(cuePoint))
-  }
-
   render() {
-    if(!this.state.shouldRender) return <div><Icon spin name="spinner fa-4x" /></div>
+    if(!this.state.shouldRender) return <Spinner />
 
     const state = this.context.store.getState()
     const { currentSong } = this.context
@@ -140,7 +118,7 @@ class PlayerAudio extends Component {
         <div style={{
           display: 'flex'
         }}>
-          <CuePoints cuePoints={cuePoints} wavesurfer={this.wavesurfer} setLoop={this.setLoop} />
+          <CuePoints cuePoints={cuePoints} wavesurfer={this.wavesurfer} />
           <LoaderAudio wavesurfer={this.wavesurfer} />
           <Playlist wavesurfer={this.wavesurfer} />
         </div>

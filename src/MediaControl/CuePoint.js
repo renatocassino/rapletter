@@ -2,7 +2,8 @@ import React from 'react'
 import PropType from 'prop-types'
 import { fancyTimeFormat } from '../utils/time'
 import { Icon } from 'react-fa'
-import { removeCuePoint, toggleActiveLoop } from '../store/actions'
+import { addCuePoint, removeCuePoint, toggleActiveLoop } from '../store/actions'
+import getId from '../utils/idGenerator'
 
 import './CuePoint.css'
 
@@ -46,14 +47,26 @@ CuePoint.contextTypes = {
   })
 }
 
-const CuePoints = ({ cuePoints, wavesurfer, setLoop }, { store, currentSong }) => (
+const setLoop = (store, wavesurfer, currentSong) => {
+  const currentTime = wavesurfer.getCurrentTime()
+
+  const cuePoint = {
+    id: getId.next().value,
+    start: currentTime,
+    end: currentTime + currentSong.mediaInfo.loopTime
+  }
+
+  store.dispatch(addCuePoint(cuePoint))
+}
+
+const CuePoints = ({ cuePoints, wavesurfer }, { store, currentSong }) => (
   <div className="cue-point">
     <div className="cue-point__control">
       <span>CuePoints</span>
       <button onClick={() => store.dispatch(toggleActiveLoop())} style={{ background: store.getState().player.loopActive ? 'rgba(0, 255, 0, 0.6)' : null }}>
         <Icon name="retweet" />
       </button>
-      <button onClick={() => setLoop()}><Icon name="plus" /></button>
+      <button onClick={() => setLoop(store, wavesurfer, currentSong)}><Icon name="plus" /></button>
     </div>
     <div className="cue-point__points-area">
       {currentSong.cuePoints.map((cuePoint) => (
