@@ -1,11 +1,12 @@
 import React from 'react'
 import PropType from 'prop-types'
-import { setMediaInfo, addSongToPlaylist } from './store/actions'
+import { addSongToPlaylist } from './store/actions'
 import detect from 'bpm-detective'
+
+const AudioContext = window.AudioContext || window.webkitAudioContext
 
 class LoaderAudio extends React.Component {
   loadAudioBuffer = (arrayBuffer) => {
-    const AudioContext = window.AudioContext || window.webkitAudioContext
     let context = new AudioContext()
 
     return new Promise((resolve, reject) => {
@@ -24,43 +25,57 @@ class LoaderAudio extends React.Component {
   }
 
   setNewSong = (ev) => {
-    /** Getting BPM */
-    var fileReader  = new FileReader()
-    const dispatch = this.context.store.dispatch
+    const target = ev.target
     const self = this
-    const title = ev.target.value.split(/(\\|\/)/g).pop()
-    var url = URL.createObjectURL(ev.target.files[0])
 
-    fileReader.onload = async function() {
+    var fileReader  = new FileReader()
+    const blob = ev.target.files[0]
+
+    fileReader.readAsArrayBuffer(blob)
+    fileReader.onload = function() {
+      const title = target.value.split(/(\\|\/)/g).pop()
       var arrayBuffer = this.result
-      const songState = await self.loadAudioBuffer(arrayBuffer)
-      const newState = Object.assign({}, songState, { title, url })
 
-      dispatch(setMediaInfo(newState))
-      dispatch(addSongToPlaylist({ mediaInfo: newState }))
+      self.loaderSong({ blob, arrayBuffer, state: { title } })
     }
+  }
 
-    fileReader.readAsArrayBuffer(ev.target.files[0])
+  setNewSongUsingUrl = async (urlToFetch, title) => {
+    let response = await fetch(urlToFetch)
+    const blob = await response.blob()
+
+    response = await fetch(urlToFetch)
+    const arrayBuffer = await response.arrayBuffer()
+
+    this.loaderSong({ arrayBuffer, blob, state: { title } })
+  }
+
+  loaderSong = async ({ arrayBuffer, blob, state={} }) => {
+    const { dispatch } = this.context.store
+
+    const url = await URL.createObjectURL(blob)
+    const songState = await this.loadAudioBuffer(arrayBuffer)
+    const newState = Object.assign({}, songState, state, { url })
+    dispatch(addSongToPlaylist({ mediaInfo: newState }))
     this.props.wavesurfer.load(url)
   }
 
-  setNewSongUsingUrl = (ev) => {
-    const url = ev.target.value
-
-    fetch(url)
-      // Get response as ArrayBuffer
-      .then(response => response.arrayBuffer())
-      .then(this.loadAudioBuffer)
-
-    this.props.wavesurfer.load(url)
+  componentDidMount() {
+    if(typeof window === 'undefined') return
+    const location = window.location
+    const baseUrl = `${location.protocol}//${location.host}`
+    this.setNewSongUsingUrl(`${baseUrl}/audios/royce-boom.mp3`, 'Royce Da 5\'9 - Boom.mp3')
+    this.setNewSongUsingUrl(`${baseUrl}/audios/Ante-Up-Instrumental.mp3`, 'Ante Up Instrumental.mp3')
+    this.setNewSongUsingUrl(`${baseUrl}/audios/DJ-Mitsu-The-Beats-Yeah-Yall.mp3`, 'DJ-Mitsu-The-Beats-Yeah-Yall.mp3')
   }
 
   render() {
     return (
       <div style={{ flexGrow: 1 }}>
+        <div>
+          <h3>Load your files here</h3>
+        </div>
         <div><input type="file" id="mediaFile" onChange={this.setNewSong} /></div>
-        <input placeholder="Put your audio url here" type="text" id="mediaFileUrl" onBlur={this.setNewSongUsingUrl} />
-        <div>Example: http://tacnoman.com/songs/royce-boom.mp3</div>
       </div>
     )
   }
