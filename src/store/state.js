@@ -4,6 +4,8 @@ export const cuePoint = {
   id: null
 }
 
+export const cuePoints = []
+
 export const mediaInfo = {
   title: '',
   duration: null,
@@ -15,7 +17,7 @@ export const mediaInfo = {
 
 export const song = {
   mediaInfo,
-  cuePoints: []
+  cuePoints
 }
 
 export const player = {

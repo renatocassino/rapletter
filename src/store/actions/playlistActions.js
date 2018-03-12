@@ -3,6 +3,7 @@ import {
 } from '../state'
 
 export const ADD_SONG_TO_PLAYLIST = 'ADD_SONG_TO_PLAYLIST'
+export const DELETE_SONG_TO_PLAYLIST = 'DELETE_SONG_TO_PLAYLIST'
 export const SET_CURRENT_SONG_TO_PLAYLIST = 'SET_CURRENT_SONG_TO_PLAYLIST'
 
 export const addSongToPlaylist = (currentSong) => ({

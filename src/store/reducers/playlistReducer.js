@@ -2,6 +2,7 @@ import initialState from '../state'
 import cuePointsReducer from './cuePointsReducer'
 import {
   ADD_SONG_TO_PLAYLIST,
+  DELETE_SONG_TO_PLAYLIST,
   SET_CURRENT_SONG_TO_PLAYLIST,
   ADD_CUE_POINT,
   REMOVE_CUE_POINT
@@ -15,6 +16,10 @@ const playlistReducer = (state = initialState.playlist, action) => {
   })
   case SET_CURRENT_SONG_TO_PLAYLIST: return Object.assign({}, state, {
     currentSong: action.currentSong
+  })
+  case DELETE_SONG_TO_PLAYLIST: return Object.assign({}, state, {
+    currentSong: action.songId <= state.currentSong ? --state.currentSong : state.currentSong,
+    songs: state.songs.filter((_, id) => id !== action.songId)
   })
   case ADD_CUE_POINT:
   case REMOVE_CUE_POINT:
