@@ -1,7 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Icon from 'react-fa'
-
+import { List, ListItem } from 'material-ui/List'
+import Subheader from 'material-ui/Subheader'
 import { setCurrentSong, deleteSongToPlaylist } from './store/actions'
 
 const Playlist = ({ wavesurfer }, {
@@ -17,27 +18,22 @@ const Playlist = ({ wavesurfer }, {
   }
 
   return (
-    <div>
-      SONGS:
+    <List>
+      <Subheader>Playlist</Subheader>
       {playlist.songs.map((song, idx) => {
         return (
-          <div
-            key={idx}
-            style={{background: idx === playlist.currentSong ? '#0F0' : 'none' }}
-          >
-            <a onClick={() => {
+          <ListItem key={idx}
+            disabled={idx === playlist.currentSong}
+            onClick={() => {
               wavesurfer.load(song.mediaInfo.url)
               dispatch(setCurrentSong(idx))
-            }}>
-              {song.mediaInfo.title}
-            </a>
-            <a onClick={() => deleteSong(idx)}>
-              <Icon name="times" />
-            </a>
-          </div>
+            }}
+            primaryText={song.mediaInfo.title}
+            rightIcon={<a onClick={(ev) => { ev.stopPropagation(); deleteSong(idx) }}><Icon name="times" /></a>}
+          />
         )
       })}
-    </div>
+    </List>
   )
 }
 

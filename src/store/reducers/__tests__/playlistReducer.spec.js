@@ -13,10 +13,21 @@ describe('playlistReducer', () => {
 
   it('set current song index to playlist', () => {
     state = {
-      currentSong: 3
+      currentSong: 0,
+      songs: [{}, {}, {}]
     }
 
     const newState = playlistReducer(state, { type: SET_CURRENT_SONG_TO_PLAYLIST, currentSong: 2 })
+    expect(newState.currentSong).toBe(2)
+  })
+
+  it('set current song with index more than songs in the playlist', () => {
+    state = {
+      currentSong: 0,
+      songs: [{}, {}]
+    }
+
+    const newState = playlistReducer(state, { type: SET_CURRENT_SONG_TO_PLAYLIST, currentSong: 4 })
     expect(newState.currentSong).toBe(2)
   })
 

@@ -15,7 +15,7 @@ const playlistReducer = (state = initialState.playlist, action) => {
     songs: [...state.songs, action.song]
   })
   case SET_CURRENT_SONG_TO_PLAYLIST: return Object.assign({}, state, {
-    currentSong: action.currentSong
+    currentSong: Math.min(action.currentSong, state.songs.length)
   })
   case DELETE_SONG_TO_PLAYLIST: return Object.assign({}, state, {
     currentSong: action.songId <= state.currentSong ? --state.currentSong : state.currentSong,

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropType from 'prop-types'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import PlayerAudio from './PlayerAudio'
 import { Provider } from 'react-redux'
 import SongProvider from './SongProvider'
@@ -13,13 +14,15 @@ class App extends Component {
 
   render() {
     return (
-      <Provider store={this.props.store}>
-        <SongProvider>
-          <div className="App">
-            <PlayerAudio />
-          </div>
-        </SongProvider>
-      </Provider>
+      <MuiThemeProvider>
+        <Provider store={this.props.store}>
+          <SongProvider>
+            <div className="App">
+              <PlayerAudio />
+            </div>
+          </SongProvider>
+        </Provider>
+      </MuiThemeProvider>
     )
   }
 }
