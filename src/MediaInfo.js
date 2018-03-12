@@ -9,8 +9,7 @@ const MediaInfo = ({
   const {
     bpm,
     duration,
-    loopTime,
-    size
+    loopTime
   } = currentSong.mediaInfo
 
   return (
@@ -20,7 +19,7 @@ const MediaInfo = ({
         <div className="player__media-info--duration">{duration}</div>
       </div>
       <div className="player__media-info--line">
-        <div className="player__media-info--bpm">BPM: {bpm} | Size: {size} | LoopTime: {fancyTimeFormat(loopTime)}</div>
+        <div className="player__media-info--bpm">BPM: {bpm} | LoopTime: {fancyTimeFormat(loopTime)}</div>
       </div>
     </div>
   )

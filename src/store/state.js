@@ -10,7 +10,6 @@ export const mediaInfo = {
   title: '',
   duration: null,
   bpm: null,
-  size: 0,
   loopTime: 0,
   url: ''
 }
