@@ -10,7 +10,7 @@ import {
   setMediaInfo,
   setIsPlaying
 } from './store/actions'
-import LoaderAudio from './loaderAudio'
+import LoaderAudio from './LoaderAudio'
 import CuePoints from './MediaControl/CuePoint'
 
 import './PlayerAudio.css'
