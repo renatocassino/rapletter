@@ -76,7 +76,7 @@ class PlayerAudio extends Component {
 
     // loop
     if (this.context.store.getState().player.loopActive) {
-      this.context.store.getState().cuePoints.forEach((loop) => {
+      this.context.currentSong.cuePoints.forEach((loop) => {
         const difference = this.wavesurfer.getCurrentTime() - loop.end
         if(difference > -0.05 && difference < 1) {
           const seekTo = (loop.start + difference) / this.wavesurfer.getDuration()

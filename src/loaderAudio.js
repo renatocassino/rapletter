@@ -16,6 +16,7 @@ class LoaderAudio extends React.Component {
         const size = (arrayBuffer.byteLength / 1024 / 1024).toFixed(2).toString().replace('.', ',') + 'MB'
         const bpm = detect(buffer)
         const loopTime = 60*8/bpm
+
         return { bpm, loopTime, size }
 
       } catch (err) {

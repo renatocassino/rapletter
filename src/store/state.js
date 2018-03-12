@@ -30,6 +30,5 @@ export const playlist = {
 
 export default {
   player,
-  playlist,
-  cuePoints: []
+  playlist
 }
