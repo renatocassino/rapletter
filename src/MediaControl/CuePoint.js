@@ -4,6 +4,7 @@ import { fancyTimeFormat } from '../utils/time'
 import { Icon } from 'react-fa'
 import { addCuePoint, removeCuePoint, toggleActiveLoop } from '../store/actions'
 import getId from '../utils/idGenerator'
+import IconButton from 'material-ui/IconButton'
 
 import './CuePoint.css'
 
@@ -59,14 +60,25 @@ const setLoop = (store, wavesurfer, currentSong) => {
   store.dispatch(addCuePoint(cuePoint))
 }
 
-const CuePoints = ({ cuePoints, wavesurfer }, { store, currentSong }) => (
+const CuePoints = ({ wavesurfer }, { store, currentSong }) => (
   <div className="cue-point">
     <div className="cue-point__control">
       <span>CuePoints</span>
-      <button onClick={() => store.dispatch(toggleActiveLoop())} style={{ background: store.getState().player.loopActive ? 'rgba(0, 255, 0, 0.6)' : null }}>
+      <IconButton
+        tooltip="Active loops"
+        onClick={() => store.dispatch(toggleActiveLoop())}
+        style={{ color: store.getState().player.loopActive ? 'rgba(0, 100, 0, 0.6)' : null, fontSize: '20px' }}
+      >
         <Icon name="retweet" />
-      </button>
-      <button onClick={() => setLoop(store, wavesurfer, currentSong)}><Icon name="plus" /></button>
+      </IconButton>
+
+      <IconButton
+        tooltip="Add cuepoint"
+        onClick={() => setLoop(store, wavesurfer, currentSong)}
+        style={{fontSize: '20px'}}
+      >
+        <Icon name="plus" />
+      </IconButton>
     </div>
     <div className="cue-point__points-area">
       {currentSong.cuePoints.map((cuePoint) => (

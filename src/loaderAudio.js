@@ -2,13 +2,13 @@ import React from 'react'
 import PropType from 'prop-types'
 import { addSongToPlaylist } from './store/actions'
 import detect from 'bpm-detective'
+import RaisedButton from 'material-ui/RaisedButton'
 
 const AudioContext = window.AudioContext || window.webkitAudioContext
+const context = new AudioContext()
 
 class LoaderAudio extends React.Component {
   loadAudioBuffer = (arrayBuffer) => {
-    let context = new AudioContext()
-
     return new Promise((resolve, reject) => {
       context.decodeAudioData(arrayBuffer, resolve, reject)
     }).then(buffer => {
@@ -72,12 +72,29 @@ class LoaderAudio extends React.Component {
   }
 
   render() {
+    const { playlist } = this.context.store.getState()
     return (
       <div style={{ flexGrow: 1 }}>
         <div>
           <h3>Load your files here</h3>
         </div>
-        <div><input type="file" id="mediaFile" onChange={this.setNewSong} /></div>
+        <RaisedButton
+          label="Choose a song"
+          labelPosition="before"
+          style={{ margin: 12 }}
+          containerElement="label"
+        >
+          <input type="file" id="mediaFile" style={{
+            cursor: 'pointer',
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            right: 0,
+            left: 0,
+            width: '100%',
+            opacity: 0,
+          }} onChange={this.setNewSong} />
+        </RaisedButton>
       </div>
     )
   }

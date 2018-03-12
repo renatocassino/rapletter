@@ -28,6 +28,7 @@ const Playlist = ({ wavesurfer }, {
               wavesurfer.load(song.mediaInfo.url)
               dispatch(setCurrentSong(idx))
             }}
+            style={{ backgroundColor: idx !== playlist.currentSong ? '#FAFAFA' : '#DCEDC8' }}
             primaryText={song.mediaInfo.title}
             rightIcon={<a onClick={(ev) => { ev.stopPropagation(); deleteSong(idx) }}><Icon name="times" /></a>}
           />
