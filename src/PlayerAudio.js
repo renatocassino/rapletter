@@ -119,8 +119,10 @@ class PlayerAudio extends Component {
           display: 'flex'
         }}>
           <CuePoints cuePoints={cuePoints} wavesurfer={this.wavesurfer} />
-          <LoaderAudio wavesurfer={this.wavesurfer} />
-          <Playlist wavesurfer={this.wavesurfer} />
+          <div style={{ flexGrow: '4' }}>
+            <LoaderAudio wavesurfer={this.wavesurfer} />
+            <Playlist wavesurfer={this.wavesurfer} />
+          </div>
         </div>
       </div>
     )

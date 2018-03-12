@@ -28,6 +28,7 @@ class LoaderAudio extends React.Component {
   setNewSong = (ev) => {
     const target = ev.target
     const self = this
+    if(ev.target.files.length === 0) return
 
     var fileReader  = new FileReader()
     const blob = ev.target.files[0]
@@ -93,7 +94,8 @@ class LoaderAudio extends React.Component {
             left: 0,
             width: '100%',
             opacity: 0,
-          }} onChange={this.setNewSong} />
+          }} onChange={this.setNewSong}
+          accept="audio/*" />
         </RaisedButton>
       </div>
     )
