@@ -2,11 +2,38 @@ import React from 'react'
 import PropType from 'prop-types'
 import { fancyTimeFormat } from '../utils/time'
 import { Icon } from 'react-fa'
-import { addCuePoint, removeCuePoint, toggleActiveLoop } from '../store/actions'
-import getId from '../utils/idGenerator'
+import { removeCuePoint, toggleActiveLoop } from '../store/actions'
 import IconButton from 'material-ui/IconButton'
-
+import { colorGenerator } from '../utils/colorGenerator'
 import './CuePoint.css'
+
+const deleteCuePoint = (store, cuePoint, wavesurfer) => {
+  store.dispatch(removeCuePoint(cuePoint.id))
+  wavesurfer.regions.list[cuePoint.id].remove()
+}
+
+const addLoop = (store, wavesurfer, currentSong) => {
+  const currentTime = wavesurfer.getCurrentTime()
+  const endTime = currentTime + currentSong.mediaInfo.loopTime
+
+  wavesurfer.addRegion({
+    start: currentTime,
+    end: endTime,
+    color: colorGenerator(),
+    loop: store.getState().player.loopActive,
+    drag: false
+  })
+}
+
+const toggleActive = (store, wavesurfer) => {
+  store.dispatch(toggleActiveLoop())
+
+  if(!wavesurfer.regions.list) return
+  for(let regionId in wavesurfer.regions.list) {
+    const region = wavesurfer.regions.list[regionId]
+    region.loop = store.getState().player.loopActive
+  }
+}
 
 const CuePoint = ({
   cuePoint,
@@ -28,7 +55,7 @@ const CuePoint = ({
     <Icon
       name="minus"
       className="cue-point__btn-close"
-      onClick={() => store.dispatch(removeCuePoint(cuePoint.id))}
+      onClick={() => deleteCuePoint(store, cuePoint, wavesurfer)}
     />
   </a>
 )
@@ -48,25 +75,13 @@ CuePoint.contextTypes = {
   })
 }
 
-const setLoop = (store, wavesurfer, currentSong) => {
-  const currentTime = wavesurfer.getCurrentTime()
-
-  const cuePoint = {
-    id: getId.next().value,
-    start: currentTime,
-    end: currentTime + currentSong.mediaInfo.loopTime
-  }
-
-  store.dispatch(addCuePoint(cuePoint))
-}
-
 const CuePoints = ({ wavesurfer }, { store, currentSong }) => (
   <div className="cue-point">
     <div className="cue-point__control">
       <span>CuePoints</span>
       <IconButton
         tooltip="Active loops"
-        onClick={() => store.dispatch(toggleActiveLoop())}
+        onClick={() => toggleActive(store, wavesurfer)}
         style={{ color: store.getState().player.loopActive ? 'rgba(0, 100, 0, 0.6)' : null, fontSize: '20px' }}
       >
         <Icon name="retweet" />
@@ -74,7 +89,7 @@ const CuePoints = ({ wavesurfer }, { store, currentSong }) => (
 
       <IconButton
         tooltip="Add cuepoint"
-        onClick={() => setLoop(store, wavesurfer, currentSong)}
+        onClick={() => addLoop(store, wavesurfer, currentSong)}
         style={{fontSize: '20px'}}
       >
         <Icon name="plus" />

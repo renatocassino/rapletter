@@ -58,15 +58,15 @@ class LoaderAudio extends React.Component {
     const songState = await this.loadAudioBuffer(arrayBuffer)
     const newState = Object.assign({}, songState, state, { url })
     dispatch(addSongToPlaylist({ mediaInfo: newState }))
-    this.props.wavesurfer.load(url)
+    window.wavesurfer.load(url)
   }
 
   componentDidMount() {
     if(typeof window === 'undefined') return
     const location = window.location
     const baseUrl = `${location.protocol}//${location.host}`
-    this.setNewSongUsingUrl(`${baseUrl}/audios/royce-boom.mp3`, 'Royce Da 5\'9 - Boom.mp3')
-    this.setNewSongUsingUrl(`${baseUrl}/audios/Ante-Up-Instrumental.mp3`, 'Ante Up Instrumental.mp3')
+    // this.setNewSongUsingUrl(`${baseUrl}/audios/royce-boom.mp3`, 'Royce Da 5\'9 - Boom.mp3')
+    // this.setNewSongUsingUrl(`${baseUrl}/audios/Ante-Up-Instrumental.mp3`, 'Ante Up Instrumental.mp3')
     this.setNewSongUsingUrl(`${baseUrl}/audios/DJ-Mitsu-The-Beats-Yeah-Yall.mp3`, 'DJ-Mitsu-The-Beats-Yeah-Yall.mp3')
     this.setNewSongUsingUrl(`${baseUrl}/audios/Pela-manha-Beat-Molla-Dj-Instrumental.mp3`, 'Pela manhã Beat - Molla DJ')
   }
