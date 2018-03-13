@@ -23,7 +23,7 @@ const enhance = compose(
       wavesurfer.on('stop', stop.bind(this))
       wavesurfer.on('ready', ready.bind(this))
       wavesurfer.on('region-created', regionCreated.bind(this))
-      //wavesurfer.on('region-updated', regionUpdated.bind(this))
+      wavesurfer.on('region-update-end', regionUpdated.bind(this))
 
       window.wavesurfer = wavesurfer
     }

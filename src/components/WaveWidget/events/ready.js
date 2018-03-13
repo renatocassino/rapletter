@@ -13,6 +13,9 @@ export function ready() {
     const cuePoint = cuePoints[i]
 
     const region = Object.assign({}, cuePointToRegion(cuePoint), {
+      loop: state.player.loopActive,
+      drag: true,
+      resize: true,
       attributes: {
         ignoreEvents: true
       }

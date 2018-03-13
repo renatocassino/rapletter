@@ -1,6 +1,7 @@
 import cuePointsReducer from '../cuePointsReducer'
 import {
   ADD_CUE_POINT,
+  UPDATE_CUE_POINT,
   REMOVE_CUE_POINT
 } from '../../actions'
 
@@ -23,6 +24,16 @@ describe('cuePointsReducer', () => {
 
     const state = cuePointsReducer([initialState], { type: ADD_CUE_POINT, cuePoint })
     expect(state).toEqual([initialState, cuePoint])
+  })
+
+  it('update cuepoint', () => {
+    const initialState = [
+      { start: 111, end: 122, id: 1 },
+      { start: 222, end: 233, id: 2 }
+    ]
+
+    const state = cuePointsReducer(initialState, { type: UPDATE_CUE_POINT, cuePoint: { start: 333, end: 444, id: 2 } })
+    expect(state[1]).toEqual({ start: 333, end: 444, id: 2 })
   })
 
   it('remove cuepoint passing id', () => {

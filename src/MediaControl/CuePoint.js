@@ -21,14 +21,15 @@ const addLoop = (store, wavesurfer, currentSong) => {
     end: endTime,
     color: colorGenerator(),
     loop: store.getState().player.loopActive,
-    drag: false
+    drag: true,
+    resize: true
   })
 }
 
 const toggleActive = (store, wavesurfer) => {
   store.dispatch(toggleActiveLoop())
 
-  if(!wavesurfer.regions.list) return
+  if(!wavesurfer.regions) return
   for(let regionId in wavesurfer.regions.list) {
     const region = wavesurfer.regions.list[regionId]
     region.loop = store.getState().player.loopActive
