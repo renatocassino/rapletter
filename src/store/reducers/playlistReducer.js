@@ -5,6 +5,7 @@ import {
   DELETE_SONG_TO_PLAYLIST,
   SET_CURRENT_SONG_TO_PLAYLIST,
   ADD_CUE_POINT,
+  UPDATE_CUE_POINT,
   REMOVE_CUE_POINT
 } from '../actions'
 
@@ -22,6 +23,7 @@ const playlistReducer = (state = initialState.playlist, action) => {
     songs: state.songs.filter((_, id) => id !== action.songId)
   })
   case ADD_CUE_POINT:
+  case UPDATE_CUE_POINT:
   case REMOVE_CUE_POINT:
     if(state.songs.length === 0) return state
     return Object.assign({}, state, {

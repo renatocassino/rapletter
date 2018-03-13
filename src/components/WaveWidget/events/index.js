@@ -1,0 +1,6 @@
+export { play } from './play'
+export { pause } from './pause'
+export { stop } from './stop'
+export { ready } from './ready'
+export { regionCreated } from './region-created'
+export { regionUpdated } from './region-updated'
