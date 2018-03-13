@@ -5,6 +5,8 @@ import PlayerAudio from './PlayerAudio'
 import { Provider } from 'react-redux'
 import SongProvider from './SongProvider'
 
+import logo from './grey-pouplayer-logo.svg'
+
 import './App.css'
 
 class App extends Component {
@@ -18,6 +20,9 @@ class App extends Component {
         <Provider store={this.props.store}>
           <SongProvider>
             <div className="App">
+              <div className={'logo'}>
+                <img src={logo} style={{height: 70, padding: '1rem'}} />
+              </div>
               <PlayerAudio />
             </div>
           </SongProvider>
