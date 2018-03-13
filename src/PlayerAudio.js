@@ -57,11 +57,15 @@ class PlayerAudio extends Component {
       })
 
       this.wavesurfer.on('ready', () => {
-        this.wavesurfer.play();
+        this.wavesurfer.enableDragSelection({})
+        this.wavesurfer.play()
 
         const duration = this.wavesurfer.getDuration()
         dispatch(setMediaInfo({ duration: fancyTimeFormat(duration) }))
       })
+
+      // this.wavesurfer.on('region-created', (region) => {
+      // })
 
       window.wavesurfer = this.wavesurfer
       setInterval(this.runEvents, 100)

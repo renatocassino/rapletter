@@ -1,7 +1,9 @@
 import React from 'react'
 import PropType from 'prop-types'
 import { Icon } from 'react-fa'
-import PlayPause from '../button/PlayPause'
+import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar'
+import RaisedButton from 'material-ui/RaisedButton'
+import Slider from 'material-ui/Slider'
 
 const MediaControl = ({
   wavesurfer = {}
@@ -10,22 +12,25 @@ const MediaControl = ({
 
   return (
     <React.Fragment>
-      <div className="player__media-control">
-        <PlayPause isPlaying={isPlaying} onClick={() => wavesurfer.playPause()} />
-        <button onClick={() => wavesurfer.stop()}><Icon name="stop" /></button>
-      </div>
-      <div className="">
-        <input type="range" min="1" max="200" defaultValue="1" style={{ width: '100%' }} onInput={(ev) => {
-          var zoomLevel = Number(ev.target.value)
+      <Toolbar>
+        <ToolbarGroup>
+          <RaisedButton onClick={() => wavesurfer.playPause()}><Icon name={isPlaying ? 'pause' : 'play'} /></RaisedButton>
+          <RaisedButton onClick={() => wavesurfer.stop()}><Icon name="stop" /></RaisedButton>
+        </ToolbarGroup>
+      </Toolbar>
+      <Slider
+        min={1} max={200}
+        onChange={(ev, value) => {
+          var zoomLevel = Number(value)
           wavesurfer.zoom(zoomLevel)
-        }} />
-      </div>
+        }}
+      />
     </React.Fragment>
   )
 }
 
 MediaControl.propTypes = {
-  wavesurfer: PropType.object,
+  wavesurfer: PropType.object
 }
 
 MediaControl.contextTypes = {
