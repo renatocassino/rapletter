@@ -3,6 +3,7 @@ import PropType from 'prop-types'
 import { addSongToPlaylist } from './store/actions'
 import detect from 'bpm-detective'
 import RaisedButton from 'material-ui/RaisedButton'
+import { fancyTimeFormat } from './utils/time';
 
 const AudioContext = window.AudioContext || window.webkitAudioContext
 const context = new AudioContext()
@@ -15,8 +16,9 @@ class LoaderAudio extends React.Component {
       try {
         const bpm = detect(buffer)
         const loopTime = 60*8/bpm
+        const duration = fancyTimeFormat(buffer.duration)
 
-        return { bpm, loopTime }
+        return { bpm, loopTime, duration }
 
       } catch (err) {
         console.error(err)
@@ -68,9 +70,10 @@ class LoaderAudio extends React.Component {
     if(location.host.match(/github/i)) {
       baseUrl = 'https://raw.githubusercontent.com/tacnoman/rapletter/master/public'
     }
-    // this.setNewSongUsingUrl(`${baseUrl}/audios/royce-boom.mp3`, 'Royce Da 5\'9 - Boom.mp3')
+
+    this.setNewSongUsingUrl(`${baseUrl}/audios/royce-boom.mp3`, 'Royce Da 5\'9 - Boom.mp3')
     // this.setNewSongUsingUrl(`${baseUrl}/audios/Ante-Up-Instrumental.mp3`, 'Ante Up Instrumental.mp3')
-    this.setNewSongUsingUrl(`${baseUrl}/audios/DJ-Mitsu-The-Beats-Yeah-Yall.mp3`, 'DJ-Mitsu-The-Beats-Yeah-Yall.mp3')
+    // this.setNewSongUsingUrl(`${baseUrl}/audios/DJ-Mitsu-The-Beats-Yeah-Yall.mp3`, 'DJ-Mitsu-The-Beats-Yeah-Yall.mp3')
     this.setNewSongUsingUrl(`${baseUrl}/audios/Pela-manha-Beat-Molla-Dj-Instrumental.mp3`, 'Pela manhã Beat - Molla DJ')
   }
 
