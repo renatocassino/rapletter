@@ -4,6 +4,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import PlayerAudio from './PlayerAudio'
 import { Provider } from 'react-redux'
 import SongProvider from './SongProvider'
+import TutorialBar from './TutorialBar'
 
 import logo from './grey-pouplayer-logo.svg'
 
@@ -25,6 +26,7 @@ class App extends Component {
                 <img src={logo} style={{height: 70, padding: '1rem'}} />
               </div>
               <PlayerAudio />
+              <TutorialBar />
               <span style={{fontSize: 12}}>Version: v{VERSION}</span>
             </div>
           </SongProvider>
