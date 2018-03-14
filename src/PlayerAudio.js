@@ -46,7 +46,6 @@ class PlayerAudio extends Component {
       mediaInfo
     } = currentSong
 
-    const { cuePoints } = state
     const wavesurfer = window.wavesurfer
 
     return (
@@ -65,7 +64,7 @@ class PlayerAudio extends Component {
         <div style={{
           display: 'flex'
         }}>
-          <CuePoints cuePoints={cuePoints} wavesurfer={wavesurfer} />
+          <CuePoints wavesurfer={wavesurfer} />
           <div style={{ flexGrow: '4' }}>
             <LoaderAudio wavesurfer={wavesurfer} />
             <Playlist wavesurfer={wavesurfer} />

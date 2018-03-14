@@ -1,10 +1,11 @@
 import React from 'react'
-import PropType from 'prop-types'
+import PropTypes from 'prop-types'
 import { fancyTimeFormat } from '../utils/time'
 import { Icon } from 'react-fa'
 import { removeCuePoint, toggleActiveLoop } from '../store/actions'
 import IconButton from 'material-ui/IconButton'
 import { colorGenerator } from '../utils/colorGenerator'
+import { lifecycle, compose, getContext } from 'recompose'
 import './CuePoint.css'
 
 const deleteCuePoint = (store, cuePoint, wavesurfer) => {
@@ -62,17 +63,17 @@ const CuePoint = ({
 )
 
 CuePoint.protoTypes = {
-  cuePoint: PropType.shape({
-    start: PropType.string,
-    end: PropType.string,
-    id: PropType.integer
+  cuePoint: PropTypes.shape({
+    start: PropTypes.string,
+    end: PropTypes.string,
+    id: PropTypes.integer
   }),
-  wavesurfer: PropType.object
+  wavesurfer: PropTypes.object
 }
 
 CuePoint.contextTypes = {
-  store: PropType.shape({
-    dispatch: PropType.func
+  store: PropTypes.shape({
+    dispatch: PropTypes.func
   })
 }
 
@@ -108,11 +109,34 @@ const CuePoints = ({ wavesurfer }, { store, currentSong }) => (
 )
 
 CuePoints.contextTypes = {
-  store: PropType.shape({
-    dispatch: PropType.func,
-    getState: PropType.func
+  store: PropTypes.shape({
+    dispatch: PropTypes.func,
+    getState: PropTypes.func
   }),
-  currentSong: PropType.object
+  currentSong: PropTypes.object
 }
 
-export default CuePoints
+const enhance = compose(
+  getContext({ currentSong: PropTypes.object }, (props) => ({ currentSong: props.currentSong })),
+  lifecycle({
+    componentDidMount() {
+      if(typeof window === 'undefined') return
+
+      document.addEventListener('keydown', (ev) => {
+        const KEY_1 = 49
+        if(ev.which < KEY_1 || ev.which > KEY_1+8) return
+
+        const codeKey = ev.which - KEY_1
+        const { cuePoints } = this.props.currentSong
+
+        if(codeKey >= cuePoints.length) return
+
+        const cuePoint = cuePoints[codeKey]
+        const seekTo = cuePoint.start / this.props.wavesurfer.getDuration()
+        this.props.wavesurfer.seekTo(seekTo)
+      })
+    }
+  })
+)
+
+export default enhance(CuePoints)

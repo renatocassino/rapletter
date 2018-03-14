@@ -43,27 +43,29 @@ class LoaderAudio extends React.Component {
     }
   }
 
-  setNewSongUsingUrl = async (urlToFetch, title) => {
+  setNewSongUsingUrl = async (urlToFetch, title, mustLoad=true) => {
     let response = await fetch(urlToFetch)
     const blob = await response.blob()
 
     response = await fetch(urlToFetch)
     const arrayBuffer = await response.arrayBuffer()
 
-    this.loaderSong({ arrayBuffer, blob, state: { title } })
+    this.loaderSong({ arrayBuffer, blob, state: { title } }, mustLoad)
   }
 
-  loaderSong = async ({ arrayBuffer, blob, state={} }) => {
+  loaderSong = async ({ arrayBuffer, blob, state={} }, mustLoad=true) => {
     const { dispatch } = this.context.store
 
     const url = await URL.createObjectURL(blob)
     const songState = await this.loadAudioBuffer(arrayBuffer)
     const newState = Object.assign({}, songState, state, { url })
     dispatch(addSongToPlaylist({ mediaInfo: newState }))
-    window.wavesurfer.load(url)
+    if(mustLoad) {
+      window.wavesurfer.load(url)
+    }
   }
 
-  componentDidMount() {
+  componentDidMount = async () => {
     if(typeof window === 'undefined') return
     const location = window.location
     let baseUrl = `${location.protocol}//${location.host}`
@@ -71,10 +73,10 @@ class LoaderAudio extends React.Component {
       baseUrl = 'https://raw.githubusercontent.com/tacnoman/rapletter/master/public'
     }
 
-    this.setNewSongUsingUrl(`${baseUrl}/audios/royce-boom.mp3`, 'Royce Da 5\'9 - Boom.mp3')
-    // this.setNewSongUsingUrl(`${baseUrl}/audios/Ante-Up-Instrumental.mp3`, 'Ante Up Instrumental.mp3')
-    // this.setNewSongUsingUrl(`${baseUrl}/audios/DJ-Mitsu-The-Beats-Yeah-Yall.mp3`, 'DJ-Mitsu-The-Beats-Yeah-Yall.mp3')
-    this.setNewSongUsingUrl(`${baseUrl}/audios/Pela-manha-Beat-Molla-Dj-Instrumental.mp3`, 'Pela manhã Beat - Molla DJ')
+    await this.setNewSongUsingUrl(`${baseUrl}/audios/royce-boom.mp3`, 'Royce Da 5\'9 - Boom.mp3', false)
+    await this.setNewSongUsingUrl(`${baseUrl}/audios/Ante-Up-Instrumental.mp3`, 'Ante Up Instrumental.mp3', false)
+    await this.setNewSongUsingUrl(`${baseUrl}/audios/DJ-Mitsu-The-Beats-Yeah-Yall.mp3`, 'DJ-Mitsu-The-Beats-Yeah-Yall.mp3', false)
+    this.setNewSongUsingUrl(`${baseUrl}/audios/Pela-manha-Beat-Molla-Dj-Instrumental.mp3`, 'Pela manhã Beat - Molla DJ', true)
   }
 
   render() {
