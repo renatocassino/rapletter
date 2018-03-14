@@ -5,15 +5,14 @@ import { Icon } from 'react-fa'
 import { removeCuePoint, toggleActiveLoop } from '../store/actions'
 import IconButton from 'material-ui/IconButton'
 import { colorGenerator } from '../utils/colorGenerator'
-import { lifecycle, compose, getContext } from 'recompose'
 import './CuePoint.css'
 
-const deleteCuePoint = (store, cuePoint, wavesurfer) => {
+export const deleteCuePoint = (store, cuePoint, wavesurfer) => {
   store.dispatch(removeCuePoint(cuePoint.id))
   wavesurfer.regions.list[cuePoint.id].remove()
 }
 
-const addLoop = (store, wavesurfer, currentSong) => {
+export const addLoop = (store, wavesurfer, currentSong) => {
   const currentTime = wavesurfer.getCurrentTime()
   const endTime = currentTime + currentSong.mediaInfo.loopTime
 
@@ -27,7 +26,7 @@ const addLoop = (store, wavesurfer, currentSong) => {
   })
 }
 
-const toggleActive = (store, wavesurfer) => {
+export const toggleActive = (store, wavesurfer) => {
   store.dispatch(toggleActiveLoop())
 
   if(!wavesurfer.regions) return
@@ -116,53 +115,4 @@ CuePoints.contextTypes = {
   currentSong: PropTypes.object
 }
 
-const enhance = compose(
-  getContext({
-    currentSong: PropTypes.object,
-    store: PropTypes.object
-  }, (props) => ({
-    currentSong: props.currentSong,
-    store: props.store
-  })),
-  lifecycle({
-    componentDidMount() {
-      if(typeof window === 'undefined') return
-
-      document.addEventListener('keydown', (ev) => {
-        const KEY_1 = 49
-        const KEY_L = 76
-        const KEY_N = 78
-
-        if(ev.which >= KEY_1 && ev.which <= KEY_1+8) {
-
-          const codeKey = ev.which - KEY_1
-          const { cuePoints } = this.props.currentSong
-
-          if(codeKey >= cuePoints.length) return
-          const cuePoint = cuePoints[codeKey]
-
-          if(ev.shiftKey) {
-            deleteCuePoint(this.props.store, cuePoint, this.props.wavesurfer)
-            return
-          }
-
-          const seekTo = cuePoint.start / this.props.wavesurfer.getDuration()
-          this.props.wavesurfer.seekTo(seekTo)
-          return
-        }
-
-        if(ev.which === KEY_L) {
-          toggleActive(this.props.store, this.props.wavesurfer)
-          return
-        }
-
-        if(ev.which === KEY_N) {
-          addLoop(this.props.store, this.props.wavesurfer, this.props.currentSong)
-          return
-        }
-      })
-    }
-  })
-)
-
-export default enhance(CuePoints)
+export default CuePoints
