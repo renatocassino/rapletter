@@ -8,6 +8,7 @@ import SongProvider from './SongProvider'
 import logo from './grey-pouplayer-logo.svg'
 
 import './App.css'
+import VERSION from './version'
 
 class App extends Component {
   static defaultProps = {
@@ -24,6 +25,7 @@ class App extends Component {
                 <img src={logo} style={{height: 70, padding: '1rem'}} />
               </div>
               <PlayerAudio />
+              <span style={{fontSize: 12}}>Version: v{VERSION}</span>
             </div>
           </SongProvider>
         </Provider>
