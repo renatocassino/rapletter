@@ -1,9 +1,9 @@
 import React from 'react'
 import PropType from 'prop-types'
-import { addSongToPlaylist } from './store/actions'
+import { addSongToPlaylist } from '../store/actions'
 import detect from 'bpm-detective'
 import RaisedButton from 'material-ui/RaisedButton'
-import { fancyTimeFormat } from './utils/time';
+import { fancyTimeFormat } from '../utils/time';
 
 const AudioContext = window.AudioContext || window.webkitAudioContext
 const context = new AudioContext()

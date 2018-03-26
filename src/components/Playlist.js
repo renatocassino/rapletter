@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import Icon from 'react-fa'
 import { List, ListItem } from 'material-ui/List'
 import Subheader from 'material-ui/Subheader'
-import { setCurrentSong, deleteSongToPlaylist } from './store/actions'
+import { setCurrentSong, deleteSongToPlaylist } from '../store/actions'
 
 const Playlist = ({ wavesurfer }, {
   store

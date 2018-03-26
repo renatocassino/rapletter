@@ -7,7 +7,7 @@ const Key = ({ value }) => (
   <kbd className="light">{value}</kbd>
 )
 
-export default class DrawerSimpleExample extends React.Component {
+export default class extends React.Component {
 
   constructor(props) {
     super(props);
@@ -42,8 +42,8 @@ export default class DrawerSimpleExample extends React.Component {
             <p><Key value={'N'} /> - To add a new CuePoint.</p>
 
             <h5>Player</h5>
-            <p><Key value={'->'} /> or <Key value={'d'} /> - To skip forward 5 seconds.</p>
-            <p><Key value={'<-'} /> or <Key value={'a'} /> - To skip backward 5 seconds.</p>
+            <p><Key value={'➡'} /> or <Key value={'d'} /> - To skip forward 5 seconds.</p>
+            <p><Key value={'⬅'} /> or <Key value={'a'} /> - To skip backward 5 seconds.</p>
             <p><Key value={'Space'} /> or <Key value={'p'} /> - To play/pause.</p>
             <p><Key value={'Enter'} /> - To stop.</p>
           </div>

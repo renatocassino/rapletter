@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { fancyTimeFormat } from './utils/time'
+import { fancyTimeFormat } from '../utils/time'
 
 const MediaInfo = ({
   currentTime,

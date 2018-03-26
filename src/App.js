@@ -4,7 +4,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import PlayerAudio from './PlayerAudio'
 import { Provider } from 'react-redux'
 import SongProvider from './SongProvider'
-import TutorialBar from './TutorialBar'
+import TutorialBar from './components/TutorialBar'
 
 import logo from './grey-pouplayer-logo.svg'
 
